@@ -245,8 +245,7 @@ INSERT INTO roles (name, description) VALUES ('admin','Quản trị'), ('user','
 
 INSERT INTO brands (name) VALUES ('Apple'), ('Samsung');
 
-INSERT INTO users
-(id, username, full_name, phone, email, password_hash, created_at, is_active)VALUES
+INSERT INTO users(id, username, full_name, phone, email, password_hash, created_at, is_active)VALUES
 (2, 'admin1', 'ADMIN', '0000000000', 'admin1@gmail.com', '$2b$10$xwjjpizvhEoZJpingEpp8ePU55bigHob4cqrl/ZqR57JWlvjqiJEq', '2026-05-12 20:13:26', 1),
 (3, 'minhthanh01', 'Nguyễn Minh An', '0912345601', 'minhthanh01@gmail.com', '$2b$10$NB5YQEZPefgxPyp8CaMKS.ASorgXtkWg5IAry5n2BfTFHty645zaa', '2026-05-12 20:15:11', 1),
 (4, 'nguyenvan123', 'Nguyễn Văn Nam', '0912345602', 'nguyenvan123@gmail.com', '$2b$10$jkBXoTxMg68T/s80KDOSNOMOK5Axm51FPh9h.MWrwKZSoCfTF8k9u', '2026-05-12 20:15:56', 1),
@@ -268,6 +267,31 @@ INSERT INTO users
 (20, 'minhha88', 'Lê Minh Hà', '0912345618', 'minhha88@gmail.com', '$2b$10$pLdiLWMtT9ROsrtE6a4vUotIBv2l2NNed/apenhvrMVofx7WWP4aUS', '2026-05-12 20:20:37', 1),
 (21, 'anhthao77', 'Nguyễn Anh Thảo', '0912345619', 'anhthao77@gmail.com', '$2b$10$W9Gvzz0/mv/kvQR3tq4NaO65.2FuZStfs/qJ0HpW9gPR0J2i8KmW', '2026-05-12 20:20:51', 1),
 (22, 'quocbao05', 'Võ Quốc Bảo', '0912345620', 'quocbao05@gmail.com', '$2b$10$e9EDY9rHcW2944zlyf2lo.AWY7G1L39PeGWyFSLUhOWY8qXFS3cnO', '2026-05-12 20:21:01', 1);
+
+INSERT INTO user_addresses 
+(user_id, full_name, phone, line1, ward, district, city, is_default)
+VALUES
+(3, 'Nguyễn Minh An', '0912345601', '12 Nguyễn Trãi', 'Thượng Đình', 'Thanh Xuân', 'Hà Nội', 1),
+(4, 'Nguyễn Văn Nam', '0912345602', '45 Lê Lợi', 'Bến Nghé', 'Quận 1', 'TP Hồ Chí Minh', 1),
+(5, 'Lê Thị Lan Hoa', '0912345603', '78 Trần Phú', 'Hải Châu 1', 'Hải Châu', 'Đà Nẵng', 1),
+(6, 'Nguyễn Hữu Hiếu', '0912345604', '23 Điện Biên Phủ', 'Đa Kao', 'Quận 1', 'TP Hồ Chí Minh', 1),
+(7, 'Trần Thị Thúy Anh', '0912345605', '90 Võ Văn Tần', 'Phường 6', 'Quận 3', 'TP Hồ Chí Minh', 1),
+(8, 'Hoàng Nam', '0912345606', '15 Phạm Văn Đồng', 'Dịch Vọng Hậu', 'Cầu Giấy', 'Hà Nội', 1),
+(9, 'Nguyễn Quỳnh Nga', '0912345607', '102 Nguyễn Huệ', 'Bến Nghé', 'Quận 1', 'TP Hồ Chí Minh', 1),
+(10, 'Lê Tuấn Anh', '0912345608', '8 Trường Chinh', 'Phương Mai', 'Đống Đa', 'Hà Nội', 1),
+(11, 'Phạm Kim Ngân', '0912345609', '56 Hùng Vương', 'Vĩnh Ninh', 'Huế', 'Thừa Thiên Huế', 1),
+(12, 'Đỗ Đức Minh', '0912345610', '67 Nguyễn Văn Linh', 'Nam Dương', 'Hải Châu', 'Đà Nẵng', 1),
+(13, 'Phương Trang', '0912345611', '120 Lý Thường Kiệt', 'Phường 14', 'Quận 10', 'TP Hồ Chí Minh', 1),
+(14, 'Nguyễn Việt Dũng', '0912345612', '44 Cầu Giấy', 'Quan Hoa', 'Cầu Giấy', 'Hà Nội', 1),
+(15, 'Nguyễn Thanh Bình', '0912345614', '89 Nguyễn Thị Minh Khai', 'Phường 5', 'Quận 3', 'TP Hồ Chí Minh', 1),
+(16, 'Lê Linh Chi', '0912345613', '31 Phan Chu Trinh', 'Điện Biên', 'Ba Đình', 'Hà Nội', 1),
+(17, 'Trương Thiên An', '0912345615', '75 Pasteur', 'Bến Nghé', 'Quận 1', 'TP Hồ Chí Minh', 1),
+(18, 'Vũ Hồng Yến', '0912345616', '11 Nguyễn Du', 'Cửa Nam', 'Hoàn Kiếm', 'Hà Nội', 1),
+(19, 'Phan Sơn Hà', '0912345617', '220 Lạch Tray', 'Đằng Giang', 'Ngô Quyền', 'Hải Phòng', 1),
+(20, 'Lê Minh Hà', '0912345618', '5 Trần Hưng Đạo', 'Phan Chu Trinh', 'Hoàn Kiếm', 'Hà Nội', 1),
+(21, 'Nguyễn Anh Thảo', '0912345619', '150 Quang Trung', 'Thạch Thang', 'Hải Châu', 'Đà Nẵng', 1),
+(22, 'Võ Quốc Bảo', '0912345620', '88 Ba Tháng Hai', 'Phường 12', 'Quận 10', 'TP Hồ Chí Minh', 1);
+
 
 INSERT INTO categories (name, parent_id) VALUES 
 ('Laptop', NULL),
@@ -927,51 +951,6 @@ INSERT INTO coupons (code, type, value, min_order, max_uses, start_at, end_at, i
 ('GIAM1TR', 'fixed', 1000000.00, 15000000.00, 500, '2026-03-01 00:00:00', '2026-04-30 23:59:59', 1),
 ('SALE10PT', 'percent', 10.00, 1000000.00, 200, '2026-01-01 00:00:00', '2026-12-31 23:59:59', 1);
 
-INSERT INTO users (username, full_name, phone, email) VALUES
-('minhthanh01', 'Nguyễn Minh An', '0912345601', 'minhthanh01@gmail.com'),
-('nguyenvan123', 'Nguyễn Văn Nam', '0912345602', 'nguyenvan123@gmail.com'),
-('lanhoa88', 'Lê Thị Lan Hoa', '0912345603', 'lanhoa88@gmail.com'),
-('hieu_nguyen', 'Nguyễn Hữu Hiếu', '0912345604', 'hieu_nguyen@gmail.com'),
-('thuyanh77', 'Trần Thị Thúy Anh', '0912345605', 'thuyanh77@gmail.com'),
-('hoangnam99', 'Hoàng Nam', '0912345606', 'hoangnam99@gmail.com'),
-('quynhnga05', 'Nguyễn Quỳnh Nga', '0912345607', 'quynhnga05@gmail.com'),
-('tuananh42', 'Lê Tuấn Anh', '0912345608', 'tuananh42@gmail.com'),
-('kimngan21', 'Phạm Kim Ngân', '0912345609', 'kimngan21@gmail.com'),
-('ducminh33', 'Đỗ Đức Minh', '0912345610', 'ducminh33@gmail.com'),
-('phuongtrang88', 'Phương Trang', '0912345611', 'phuongtrang88@gmail.com'),
-('vietdung77', 'Nguyễn Việt Dũng', '0912345612', 'vietdung77@gmail.com'),
-('linhchi99', 'Lê Linh Chi', '0912345613', 'linhchi99@gmail.com'),
-('thanhbinh05', 'Nguyễn Thanh Bình', '0912345614', 'thanhbinh05@gmail.com'),
-('thienan42', 'Trương Thiên An', '0912345615', 'thienan42@gmail.com'),
-('hongyen21', 'Vũ Hồng Yến', '0912345616', 'hongyen21@gmail.com'),
-('sonha33', 'Phan Sơn Hà', '0912345617', 'sonha33@gmail.com'),
-('minhha88', 'Lê Minh Hà', '0912345618', 'minhha88@gmail.com'),
-('anhthao77', 'Nguyễn Anh Thảo', '0912345619', 'anhthao77@gmail.com'),
-('quocbao05', 'Võ Quốc Bảo', '0912345620', 'quocbao05@gmail.com');
-
-INSERT INTO user_addresses 
-(user_id, full_name, phone, line1, ward, district, city, is_default)
-VALUES
-(3, 'Nguyễn Minh An', '0912345601', '12 Nguyễn Trãi', 'Thượng Đình', 'Thanh Xuân', 'Hà Nội', 1),
-(4, 'Nguyễn Văn Nam', '0912345602', '45 Lê Lợi', 'Bến Nghé', 'Quận 1', 'TP Hồ Chí Minh', 1),
-(5, 'Lê Thị Lan Hoa', '0912345603', '78 Trần Phú', 'Hải Châu 1', 'Hải Châu', 'Đà Nẵng', 1),
-(6, 'Nguyễn Hữu Hiếu', '0912345604', '23 Điện Biên Phủ', 'Đa Kao', 'Quận 1', 'TP Hồ Chí Minh', 1),
-(7, 'Trần Thị Thúy Anh', '0912345605', '90 Võ Văn Tần', 'Phường 6', 'Quận 3', 'TP Hồ Chí Minh', 1),
-(8, 'Hoàng Nam', '0912345606', '15 Phạm Văn Đồng', 'Dịch Vọng Hậu', 'Cầu Giấy', 'Hà Nội', 1),
-(9, 'Nguyễn Quỳnh Nga', '0912345607', '102 Nguyễn Huệ', 'Bến Nghé', 'Quận 1', 'TP Hồ Chí Minh', 1),
-(10, 'Lê Tuấn Anh', '0912345608', '8 Trường Chinh', 'Phương Mai', 'Đống Đa', 'Hà Nội', 1),
-(11, 'Phạm Kim Ngân', '0912345609', '56 Hùng Vương', 'Vĩnh Ninh', 'Huế', 'Thừa Thiên Huế', 1),
-(12, 'Đỗ Đức Minh', '0912345610', '67 Nguyễn Văn Linh', 'Nam Dương', 'Hải Châu', 'Đà Nẵng', 1),
-(13, 'Phương Trang', '0912345611', '120 Lý Thường Kiệt', 'Phường 14', 'Quận 10', 'TP Hồ Chí Minh', 1),
-(14, 'Nguyễn Việt Dũng', '0912345612', '44 Cầu Giấy', 'Quan Hoa', 'Cầu Giấy', 'Hà Nội', 1),
-(15, 'Nguyễn Thanh Bình', '0912345614', '89 Nguyễn Thị Minh Khai', 'Phường 5', 'Quận 3', 'TP Hồ Chí Minh', 1),
-(16, 'Lê Linh Chi', '0912345613', '31 Phan Chu Trinh', 'Điện Biên', 'Ba Đình', 'Hà Nội', 1),
-(17, 'Trương Thiên An', '0912345615', '75 Pasteur', 'Bến Nghé', 'Quận 1', 'TP Hồ Chí Minh', 1),
-(18, 'Vũ Hồng Yến', '0912345616', '11 Nguyễn Du', 'Cửa Nam', 'Hoàn Kiếm', 'Hà Nội', 1),
-(19, 'Phan Sơn Hà', '0912345617', '220 Lạch Tray', 'Đằng Giang', 'Ngô Quyền', 'Hải Phòng', 1),
-(20, 'Lê Minh Hà', '0912345618', '5 Trần Hưng Đạo', 'Phan Chu Trinh', 'Hoàn Kiếm', 'Hà Nội', 1),
-(21, 'Nguyễn Anh Thảo', '0912345619', '150 Quang Trung', 'Thạch Thang', 'Hải Châu', 'Đà Nẵng', 1),
-(22, 'Võ Quốc Bảo', '0912345620', '88 Ba Tháng Hai', 'Phường 12', 'Quận 10', 'TP Hồ Chí Minh', 1);
 
 
 INSERT INTO orders 
