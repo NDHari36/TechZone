@@ -245,6 +245,30 @@ INSERT INTO roles (name, description) VALUES ('admin','Quản trị'), ('user','
 
 INSERT INTO brands (name) VALUES ('Apple'), ('Samsung');
 
+INSERT INTO users
+(id, username, full_name, phone, email, password_hash, created_at, is_active)VALUES
+(2, 'admin1', 'ADMIN', '0000000000', 'admin1@gmail.com', '$2b$10$xwjjpizvhEoZJpingEpp8ePU55bigHob4cqrl/ZqR57JWlvjqiJEq', '2026-05-12 20:13:26', 1),
+(3, 'minhthanh01', 'Nguyễn Minh An', '0912345601', 'minhthanh01@gmail.com', '$2b$10$NB5YQEZPefgxPyp8CaMKS.ASorgXtkWg5IAry5n2BfTFHty645zaa', '2026-05-12 20:15:11', 1),
+(4, 'nguyenvan123', 'Nguyễn Văn Nam', '0912345602', 'nguyenvan123@gmail.com', '$2b$10$jkBXoTxMg68T/s80KDOSNOMOK5Axm51FPh9h.MWrwKZSoCfTF8k9u', '2026-05-12 20:15:56', 1),
+(5, 'lanhoa88', 'Lê Thị Lan Hoa', '0912345603', 'lanhoa88@gmail.com', '$2b$10$ck8d8DAbVXh2MxrLWjSiLkkkJAOCWAJ.nbWIoEiws1FNArsySaS', '2026-05-12 20:16:07', 1),
+(6, 'hieu_nguyen', 'Nguyễn Hữu Hiếu', '0912345604', 'hieu_nguyen@gmail.com', '$2b$10$e0P7jSXvAazTbhm6Lqlb.J7n64O6jBAbm7GiqrrNF3/G9vxiN11S', '2026-05-12 20:16:29', 1),
+(7, 'thuyanh77', 'Trần Thị Thúy Anh', '0912345605', 'thuyanh77@gmail.com', '$2b$10$7vzdIYOidq6B81wVnVA9ie9zkPT6gubrd5XhxdF2X5oTUxRfQjrIW', '2026-05-12 20:16:49', 1),
+(8, 'hoangnam99', 'Hoàng Nam', '0912345606', 'hoangnam99@gmail.com', '$2b$10$aanLRlfbbYJkSnFOQlaNNONJ3k15YmDRN5qFKps9QUhA9UHxbNwe', '2026-05-12 20:16:58', 1),
+(9, 'quynhnga05', 'Nguyễn Quỳnh Nga', '0912345607', 'quynhnga05@gmail.com', '$2b$10$bXJPjzecLoVWtobqbaOte6H0kBFpEJhrzc6r3e3TggiIGH8TRo5q', '2026-05-12 20:17:15', 1),
+(10, 'tuananh42', 'Lê Tuấn Anh', '0912345608', 'tuananh42@gmail.com', '$2b$10$QqSHXS22ID1dDxp2gK9jw..3OTbmUn80F6gp/Ll3.4tSpxOt2.QMi', '2026-05-12 20:17:30', 1),
+(11, 'kimngan21', 'Phạm Kim Ngân', '0912345609', 'kimngan21@gmail.com', '$2b$10$Ds2UnfV5EKZQxPpxnmXT.A5556k6EIPMDxLpvQ8gFoba6gX8Nzjq', '2026-05-12 20:18:20', 1),
+(12, 'ducminh33', 'Đỗ Đức Minh', '0912345610', 'ducminh33@gmail.com', '$2b$10$AFX5h2jCfEoZtCFDo0Dpe.aVo.hV1.HIPRmCeoExWLIJX2.kc/xm', '2026-05-12 20:18:36', 1),
+(13, 'phuongtrang88', 'Phương Trang', '0912345611', 'phuongtrang88@gmail.com', '$2b$10$tvuzM7hRL2oddc2nH8T9luWPpd84bO7xR0tvRDwc8syXGk9.CC5W', '2026-05-12 20:18:47', 1),
+(14, 'vietdung77', 'Nguyễn Việt Dũng', '0912345612', 'vietdung77@gmail.com', '$2b$10$fm6mpc.CtnUGV0ulw9G460JvcNK.y985gbQbcBsYe4LcELUFYMS2', '2026-05-12 20:19:06', 1),
+(15, 'thanhbinh05', 'Nguyễn Thanh Bình', '0912345614', 'thanhbinh05@gmail.com', '$2b$10$yK00HYgWt3mvKvsg0LWAuz/pVrbj/O1kWwTlQ9AcKg6/7LC27kRK', '2026-05-12 20:19:27', 1),
+(16, 'linhchi99', 'Lê Linh Chi', '0912345613', 'linhchi99@gmail.com', '$2b$10$e/MzmJPaw1xaxH6JAtTgoOzXwXIZV4fNVXR5d/HT1bBX5jPjm/9S', '2026-05-12 20:19:39', 1),
+(17, 'thienan42', 'Trương Thiên An', '0912345615', 'thienan42@gmail.com', '$2b$10$IWho8rx44J40HPxj86/TDuRT3wDTmMN9iq3UxTCIP1Mmd5ug3UPmm', '2026-05-12 20:19:57', 1),
+(18, 'hongyen21', 'Vũ Hồng Yến', '0912345616', 'hongyen21@gmail.com', '$2b$10$kLq5TTtHY45zZdaRODjV/ORHPoadO/0KUwr12uSGJgppbnF1.Bl08q', '2026-05-12 20:20:08', 1),
+(19, 'sonha33', 'Phan Sơn Hà', '0912345617', 'sonha33@gmail.com', '$2b$10$ZF7i5SVOn7PI9xRWZ/8y.EN0rR5Y4xQRY2A13TmH1z0LetR2aW6e', '2026-05-12 20:20:27', 1),
+(20, 'minhha88', 'Lê Minh Hà', '0912345618', 'minhha88@gmail.com', '$2b$10$pLdiLWMtT9ROsrtE6a4vUotIBv2l2NNed/apenhvrMVofx7WWP4aUS', '2026-05-12 20:20:37', 1),
+(21, 'anhthao77', 'Nguyễn Anh Thảo', '0912345619', 'anhthao77@gmail.com', '$2b$10$W9Gvzz0/mv/kvQR3tq4NaO65.2FuZStfs/qJ0HpW9gPR0J2i8KmW', '2026-05-12 20:20:51', 1),
+(22, 'quocbao05', 'Võ Quốc Bảo', '0912345620', 'quocbao05@gmail.com', '$2b$10$e9EDY9rHcW2944zlyf2lo.AWY7G1L39PeGWyFSLUhOWY8qXFS3cnO', '2026-05-12 20:21:01', 1);
+
 INSERT INTO categories (name, parent_id) VALUES 
 ('Laptop', NULL),
 ('Điện thoại', NULL),
@@ -254,7 +278,6 @@ INSERT INTO categories (name, parent_id) VALUES
 ('Samsung', 2),  
 ('Watch', NULL), 
 ('AirPods', NULL);
-
 
 INSERT INTO products (brand_id, category_id, name, description, is_active) VALUES 
 (1, 1, 'MacBook Pro M3 14 inch', 'Laptop Apple cao cấp', 1),
