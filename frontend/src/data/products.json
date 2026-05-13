@@ -1,0 +1,218 @@
+{
+  "phones": [
+    {
+      "id": "p1",
+      "name": "iPhone 15 Pro Max",
+      "price": 1299.99,
+      "image": "https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-15-pro-max-1.jpg",
+      "category": "phones",
+      "description": "A17 Pro chip, 48MP camera, Titanium design",
+      "brand": "Apple",
+      "specs": {
+        "screen": "6.7-inch Super Retina XDR",
+        "storage": "256GB",
+        "color": "Natural Titanium"
+      }
+    },
+    {
+      "id": "p2",
+      "name": "Samsung Galaxy S23 Ultra",
+      "price": 1199.99,
+      "image": "https://fdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-s23-ultra-5g-1.jpg",
+      "category": "phones",
+      "description": "200MP camera, S Pen, 5G",
+      "brand": "Samsung",
+      "specs": {
+        "screen": "6.8-inch Dynamic AMOLED",
+        "storage": "256GB",
+        "color": "Phantom Black"
+      }
+    },
+    {
+      "id": "p3",
+      "name": "Google Pixel 8 Pro",
+      "price": 999.99,
+      "image": "https://fdn2.gsmarena.com/vv/pics/google/google-pixel-8-pro-1.jpg",
+      "category": "phones",
+      "description": "Advanced AI features, Superior camera",
+      "brand": "Google",
+      "specs": {
+        "screen": "6.7-inch LTPO OLED",
+        "storage": "128GB",
+        "color": "Obsidian"
+      }
+    },
+    {
+      "id": "p4",
+      "name": "Xiaomi 13 Pro",
+      "price": 899.99,
+      "image": "https://fdn2.gsmarena.com/vv/pics/xiaomi/xiaomi-13-pro-1.jpg",
+      "category": "phones",
+      "description": "Leica optics, Fast charging",
+      "brand": "Xiaomi",
+      "specs": {
+        "screen": "6.73-inch AMOLED",
+        "storage": "256GB",
+        "color": "Ceramic Black"
+      }
+    },
+    {
+      "id": "p5",
+      "name": "OnePlus 11",
+      "price": 699.99,
+      "image": "https://fdn2.gsmarena.com/vv/pics/oneplus/oneplus-11-1.jpg",
+      "category": "phones",
+      "description": "Hasselblad camera, 100W charging",
+      "brand": "OnePlus",
+      "specs": {
+        "screen": "6.7-inch Fluid AMOLED",
+        "storage": "128GB",
+        "color": "Eternal Green"
+      }
+    }
+  ],
+  "laptops": [
+    {
+      "id": "l1",
+      "name": "MacBook Pro 16",
+      "price": 2499.99,
+      "image": "https://www.notebookcheck.net/fileadmin/Notebooks/Apple/MacBook_Pro_16_2023_M2_Max/AcerPred_1.jpg",
+      "category": "laptops",
+      "description": "M2 Max chip, 32GB RAM",
+      "brand": "Apple",
+      "specs": {
+        "processor": "Apple M2 Max",
+        "ram": "32GB",
+        "storage": "1TB SSD"
+      }
+    },
+    {
+      "id": "l2",
+      "name": "Dell XPS 15",
+      "price": 1999.99,
+      "image": "https://www.notebookcheck.net/fileadmin/Notebooks/Dell/XPS_15_9520_i7-12700H_RTX_3050_Ti/Dell_XPS_15_9520_Produktfotos_9.jpg",
+      "category": "laptops",
+      "description": "4K OLED, RTX 4070",
+      "brand": "Dell",
+      "specs": {
+        "processor": "Intel i9-13900H",
+        "ram": "32GB",
+        "storage": "1TB SSD"
+      }
+    },
+    {
+      "id": "l3",
+      "name": "Lenovo Legion Pro 7",
+      "price": 2299.99,
+      "image": "https://www.notebookcheck.net/fileadmin/Notebooks/Lenovo/Legion_Pro_7_16IRX8H/Lenovo_Legion_Pro_7_16IRX8H_Produktbilder_1.jpg",
+      "category": "laptops",
+      "description": "Gaming powerhouse, RGB",
+      "brand": "Lenovo",
+      "specs": {
+        "processor": "AMD Ryzen 9 7945HX",
+        "ram": "32GB",
+        "storage": "2TB SSD"
+      }
+    },
+    {
+      "id": "l4",
+      "name": "Razer Blade 14",
+      "price": 1999.99,
+      "image": "https://www.notebookcheck.net/fileadmin/Notebooks/Razer/Blade_14_2023/Razer_Blade_14_2023_Produktbilder_1.jpg",
+      "category": "laptops",
+      "description": "Compact gaming laptop",
+      "brand": "Razer",
+      "specs": {
+        "processor": "AMD Ryzen 9 7940HS",
+        "ram": "16GB",
+        "storage": "1TB SSD"
+      }
+    },
+    {
+      "id": "l5",
+      "name": "ASUS ROG Zephyrus G14",
+      "price": 1699.99,
+      "image": "https://www.notebookcheck.net/fileadmin/Notebooks/Asus/ROG_Zephyrus_G14_GA402X/Asus_ROG_Zephyrus_G14_2023_Test_1.jpg",
+      "category": "laptops",
+      "description": "Portable gaming powerhouse",
+      "brand": "ASUS",
+      "specs": {
+        "processor": "AMD Ryzen 9 7940HS",
+        "ram": "16GB",
+        "storage": "1TB SSD"
+      }
+    }
+  ],
+  "tablets": [
+    {
+      "id": "t1",
+      "name": "iPad Pro 12.9",
+      "price": 1099.99,
+      "image": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spacegray-202210?wid=470&hei=556&fmt=png-alpha&.v=1664411207545",
+      "category": "tablets",
+      "description": "M2 chip, XDR display",
+      "brand": "Apple",
+      "specs": {
+        "screen": "12.9-inch Liquid Retina XDR",
+        "storage": "256GB",
+        "color": "Space Gray"
+      }
+    },
+    {
+      "id": "t2",
+      "name": "Samsung Galaxy Tab S9 Ultra",
+      "price": 1199.99,
+      "image": "https://images.samsung.com/is/image/samsung/p6pim/vn/sm-x910nzaexev/gallery/vn-galaxy-tab-s9-ultra-wifi-x910-sm-x910nzaexev-thumb-537812034",
+      "category": "tablets",
+      "description": "14.6-inch AMOLED, S Pen",
+      "brand": "Samsung",
+      "specs": {
+        "screen": "14.6-inch Super AMOLED",
+        "storage": "256GB",
+        "color": "Graphite"
+      }
+    },
+    {
+      "id": "t3",
+      "name": "Microsoft Surface Pro 9",
+      "price": 999.99,
+      "image": "https://img-prod-cms-rt-microsoft-com.akamaized.net/cms/api/am/imageFileData/RE50o3Q?ver=0380&q=90&m=6&h=705&w=1240&b=%23FFFFFFFF&f=jpg&o=f&p=140&aim=true",
+      "category": "tablets",
+      "description": "2-in-1 PC tablet",
+      "brand": "Microsoft",
+      "specs": {
+        "screen": "13-inch PixelSense",
+        "storage": "256GB",
+        "color": "Platinum"
+      }
+    },
+    {
+      "id": "t4",
+      "name": "Lenovo Tab P12 Pro",
+      "price": 699.99,
+      "image": "https://p1-ofp.static.pub/medias/bWFzdGVyfHJvb3R8NjQ1Nzh8aW1hZ2UvcG5nfGhjZC9oNDYvMTI4MTY0MjU5NzI3NjYucG5nfDQxZWNkNjc4MmY2NmZhZDVkYjU2ZTQ5YWFlZmY4ZjkwZmJlYjRhNzc2ZjRhMzliOGVjZDY2ZjRiYzM3M2EyOGE/p12pro-kv.png",
+      "category": "tablets",
+      "description": "AMOLED display, Precision Pen",
+      "brand": "Lenovo",
+      "specs": {
+        "screen": "12.6-inch AMOLED",
+        "storage": "128GB",
+        "color": "Storm Grey"
+      }
+    },
+    {
+      "id": "t5",
+      "name": "Xiaomi Pad 6",
+      "price": 399.99,
+      "image": "https://i02.appmifile.com/231_operator_sg/10/05/2023/ce9ed52d48a23e54b4b862ec5a4e8992.png",
+      "category": "tablets",
+      "description": "High performance, affordable",
+      "brand": "Xiaomi",
+      "specs": {
+        "screen": "11-inch 2.8K LCD",
+        "storage": "128GB",
+        "color": "Gravity Gray"
+      }
+    }
+  ]
+}

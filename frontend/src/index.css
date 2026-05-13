@@ -1,0 +1,360 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Bebas+Neue&family=Bitcount+Grid+Single:wght@100..900&family=Permanent+Marker&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Heading font utility for Bebas Neue */
+.font-Bebas {
+  font-family:
+    "Bebas Neue",
+    "Roboto",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Utility: use Roboto for clean modern headings */
+.font-roboto {
+  font-family:
+    "Roboto",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+/* Elegant section title */
+.section-title {
+  font-family: "Playfair Display", "Cormorant Garamond", serif;
+  font-size: 2.5rem; /* 40px */
+  line-height: 1.04;
+  font-weight: 700;
+  color: #0b1220;
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+.section-subtitle {
+  font-family: "Cormorant Garamond", serif;
+  color: #475569; /* slate-500 */
+  margin-top: 0.5rem;
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+/* Section container with subtle border and rounded corners */
+.section-container {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 255, 255, 0.5)
+  );
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.04);
+}
+
+.section-title-sm {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #0b1220;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Default app font and base colors for black & white theme */
+body {
+  font-family:
+    "Roboto",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
+  color: #0f172a; /* slate-900 */
+  /* slightly off-white background to reduce harshness */
+  background-color: #f8fafc; /* slate-50 */
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.animate-zoom-in {
+  animation: zoom-in 0.6s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-in-out;
+}
+
+/* Blob Animation */
+@keyframes blob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, -50px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(50px, 50px) scale(1.05);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+/* small delay helper for blob animation */
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+/* promo banner styles */
+.promo-banner {
+  position: relative;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6),
+    rgba(248, 250, 252, 0.9)
+  );
+  border-radius: 14px;
+  padding: 2px;
+}
+.promo-banner > .container {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.85)
+  );
+  border-radius: 12px;
+  z-index: 10;
+}
+
+/* Hero background: subtle moving gradient and layered texture for BW vibe */
+.hero-bg {
+  /* simpler hero: soft off-white base with a gentle color band at the top */
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  overflow: hidden;
+  position: relative;
+}
+.hero-bg::before {
+  /* soft color band across the top, blurred so it doesn't overpower content */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 160px;
+  background: linear-gradient(
+    90deg,
+    rgba(99, 102, 241, 0.22),
+    rgba(14, 165, 233, 0.16),
+    rgba(249, 115, 22, 0.14)
+  );
+  filter: blur(60px);
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-bg::after {
+  /* subtle vignette to help foreground text read */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.02),
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes hero-move {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(-6px) scale(1.01);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.95;
+  }
+}
+
+/* subtle moving diagonal line pattern on hero */
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* layered moving soft spots to add gentle motion to the hero background */
+  background-image:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(99, 102, 241, 0.06) 0%,
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(14, 165, 233, 0.05) 0%,
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 50% 80%,
+      rgba(249, 115, 22, 0.04) 0%,
+      transparent 30%
+    );
+  background-repeat: no-repeat;
+  background-size:
+    60% 60%,
+    50% 50%,
+    80% 60%;
+  animation:
+    pattern-move 18s linear infinite,
+    hero-move 8s ease-in-out infinite;
+  opacity: 0.95;
+}
+
+@keyframes pattern-move {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 360px 360px;
+  }
+}
+
+@keyframes sheen-move {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+}
+
+/* Product card black & white styling and hover effects */
+.product-card {
+  transition:
+    transform 0.36s cubic-bezier(0.2, 0.9, 0.2, 1),
+    box-shadow 0.36s ease,
+    border-color 0.36s ease;
+}
+.product-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.12);
+  border-color: rgba(15, 23, 42, 0.06);
+}
+.product-card .img-grayscale {
+  /* slightly desaturated by default for a gentle BW look */
+  filter: grayscale(30%) contrast(0.98) brightness(0.98) saturate(0.95);
+  transition:
+    filter 0.45s ease,
+    transform 0.45s ease;
+  will-change: filter, transform;
+}
+.product-card:hover .img-grayscale {
+  /* full color and a slight pop on hover */
+  filter: grayscale(0%) contrast(1.02) brightness(1.02) saturate(1.08);
+  transform: scale(1.06);
+}
+
+/* subtle white shine on hover */
+.product-card::after {
+  content: "";
+  position: absolute;
+  left: -50%;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.03),
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.03)
+  );
+  transform: translateX(-100%) rotate(12deg);
+  pointer-events: none;
+  transition: transform 0.7s ease;
+  opacity: 0;
+}
+.product-card:hover::after {
+  transform: translateX(250%) rotate(12deg);
+  opacity: 1;
+}
+
+/* Utility: darker headings for BW theme */
+.bw-heading {
+  color: #0f172a;
+}

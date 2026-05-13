@@ -1,0 +1,251 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+' ======== AUTH ========
+class User {
+  +Long id
+  +String email
+  -String passwordHash
+  +String fullName
+  +String phone
+  +Timestamp createdAt
+  +Boolean isActive
+}
+
+class Role {
+  +Long id
+  +String name
+  +String description
+}
+
+class UserRole <<association>> {
+  +Long userId
+  +Long roleId
+  ..PK.. (userId, roleId)
+}
+
+class Address {
+  +Long id
+  +Long userId
+  +String recipient
+  +String phone
+  +String line1
+  +String line2
+  +String ward
+  +String district
+  +String city
+  +Boolean isDefault
+}
+
+User "1" --> "0..*" Address : has
+UserRole "*" --> "1" User
+UserRole "*" --> "1" Role
+User "0..*" -- "0..*" Role : via UserRole
+
+' ======== CATALOG ========
+class Brand {
+  +Long id
+  +String name
+}
+
+class Category {
+  +Long id
+  +String name
+  +Long parentId
+}
+
+class Product {
+  +Long id
+  +Long brandId
+  +Long categoryId
+  +String name
+  +String color
+  +String storage
+  +String description
+  +Boolean isActive
+  +Timestamp createdAt
+}
+
+class ProductImage {
+  +Long id
+  +Long productId
+  +String imageUrl
+  +Boolean isPrimary
+  +int sortOrder
+}
+
+class ProductSpec {
+  +Long id
+  +Long productId
+  +String name
+  +String value
+  +int sortOrder
+}
+
+class Inventory {
+  +Long id
+  +Long productId
+  +int quantity
+  +int safetyStock
+  +Timestamp updatedAt
+}
+
+class IMEI {
+  +Long id
+  +Long productId
+  +String imei
+  +String status
+}
+
+Brand "1" --> "0..*" Product : brands
+Category "0..1" <-- "0..*" Category : parent
+Category "1" <-- "0..*" Product : categorizes
+Product "1" *-- "0..*" ProductImage : images
+Product "1" *-- "0..*" ProductSpec : specs
+Product "1" o-- "0..1" Inventory : inventory
+Product "1" *-- "0..*" IMEI : serials
+
+' ======== CART ========
+class Cart {
+  +Long id
+  +Long userId
+  +Timestamp updatedAt
+}
+
+class CartItem {
+  +Long id
+  +Long cartId
+  +Long productId
+  +int qty
+  +Decimal unitPriceSnapshot
+}
+
+User "1" <-- "0..1" Cart : owns (unique)
+Cart "1" *-- "0..*" CartItem : items
+CartItem "*" --> "1" Product : for
+
+' ======== ORDER ========
+class Order {
+  +Long id
+  +Long userId
+  +String code
+  +String status
+  +Decimal subtotal
+  +Decimal discountTotal
+  +Decimal shippingFee
+  +Decimal total
+  +String receiverName
+  +String receiverPhone
+  +String shipLine1
+  +String shipLine2
+  +String shipWard
+  +String shipDistrict
+  +String shipCity
+  +Timestamp createdAt
+  +Timestamp paidAt
+}
+
+class OrderItem {
+  +Long id
+  +Long orderId
+  +Long productId
+  +String productNameSnapshot
+  +String colorSnapshot
+  +String storageSnapshot
+  +Decimal unitPriceSnapshot
+  +int qty
+  +Decimal lineTotal
+}
+
+class OrderItemIMEI <<association>> {
+  +Long orderItemId
+  +Long imeiId
+  ..PK.. (orderItemId, imeiId)
+}
+
+User "1" --> "0..*" Order : places
+Order "1" *-- "1..*" OrderItem : lines
+OrderItem "*" --> "1" Product : product
+OrderItemIMEI "*" --> "1" OrderItem
+OrderItemIMEI "*" --> "1" IMEI
+
+' ======== PAYMENT / SHIPMENT ========
+class Payment {
+  +Long id
+  +Long orderId
+  +String method
+  +String status
+  +String txId
+  +Json payloadJson
+  +Timestamp updatedAt
+}
+
+class Shipment {
+  +Long id
+  +Long orderId
+  +String carrier
+  +String trackingCode
+  +String status
+  +Timestamp updatedAt
+}
+
+Order "1" o-- "0..1" Payment : payment (unique)
+Order "1" o-- "0..1" Shipment : shipment (unique)
+
+' ======== COUPON ========
+class Coupon {
+  +Long id
+  +String code
+  +String type
+  +Decimal value
+  +Decimal minOrder
+  +int maxUses
+  +int usedCount
+  +Timestamp startAt
+  +Timestamp endAt
+  +Boolean isActive
+}
+
+class OrderCoupon <<association>> {
+  +Long orderId
+  +Long couponId
+  +Decimal discountApplied
+  ..PK.. (orderId, couponId)
+}
+
+Order "0..*" -- "0..*" Coupon : via OrderCoupon
+OrderCoupon "*" --> "1" Order
+OrderCoupon "*" --> "1" Coupon
+
+' ======== REVIEW ========
+class Review {
+  +Long id
+  +Long userId
+  +Long productId
+  +short rating
+  +String content
+  +Boolean isApproved
+  +Timestamp createdAt
+  ..Unique.. (userId, productId)
+}
+
+User "1" --> "0..*" Review : writes
+Product "1" <-- "0..*" Review : for
+
+' ======== WARRANTY ========
+class WarrantyTicket {
+  +Long id
+  +Long imeiId
+  +Long orderId
+  +String code
+  +Date startAt
+  +Date endAt
+  +String status
+  +String note
+}
+
+IMEI "1" --> "0..*" WarrantyTicket : coveredBy
+Order "1" --> "0..*" WarrantyTicket : issues
+
+@enduml
