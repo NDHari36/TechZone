@@ -1,8 +1,3 @@
-CREATE DATABASE TechZone
-
-drop DATABASE TechZone
-
-use TechZone
 -- =====================================
 -- 1. SCHEMA
 -- =====================================
