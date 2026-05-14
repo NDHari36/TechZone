@@ -8,18 +8,21 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 
-// Cấu hình Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ["http://localhost:5173", "https://tech-zone-eight.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   },
 });
-
-// Gắn io vào app để dùng ở mọi nơi
 app.set("socketio", io);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://tech-zone-eight.vercel.app"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 const db = require("./src/config/db");
@@ -47,7 +50,6 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 8081;
-// LƯU Ý SỬA THÀNH server.listen THAY VÌ app.listen
 server.listen(PORT, () => {
   console.log(`-------------------------------------------`);
   console.log(`Server đang chạy tại: http://localhost:${PORT}`);
