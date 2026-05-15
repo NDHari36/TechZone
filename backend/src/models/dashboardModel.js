@@ -36,7 +36,7 @@ class Dashboard {
       FROM orders
       ${whereClause} AND status = 'completed'
       GROUP BY DATE(created_at)
-      ORDER BY created_at ASC
+      ORDER BY DATE(created_at) ASC
     `;
     const [rows] = await db.query(sql, params);
     return rows;
@@ -53,7 +53,8 @@ class Dashboard {
       FROM orders
       ${whereClause}
       GROUP BY DATE(created_at)
-      ORDER BY DATE(created_at) ASC    `;
+      ORDER BY DATE(created_at) ASC
+    `;
     const [rows] = await db.query(sql, params);
     return rows;
   }
