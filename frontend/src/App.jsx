@@ -22,7 +22,7 @@ import OrderDetail from "./Pages/OrderDetail";
 import Admin from "./Components/admin/Admin";
 import Compare from "./Pages/Compare";
 
-const socket = io("http://localhost:8081");
+const socket = io("https://techzone-api-wkxx.onrender.com");
 
 function App() {
   useEffect(() => {
