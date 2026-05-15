@@ -31,30 +31,38 @@ class Dashboard {
 
   static async getRevenueChart(startDate, endDate) {
     const { whereClause, params } = this.getDateFilter(startDate, endDate);
+
     const sql = `
-      SELECT DATE_FORMAT(created_at, '%d/%m') AS name, SUM(total) AS total
-      FROM orders
-      ${whereClause} AND status = 'completed'
-      GROUP BY DATE(created_at)
-      ORDER BY DATE(created_at) ASC
-    `;
+    SELECT 
+      DATE(created_at) AS order_date,
+      DATE_FORMAT(DATE(created_at), '%d/%m') AS name,
+      SUM(total) AS total
+    FROM orders
+    ${whereClause} AND status = 'completed'
+    GROUP BY order_date
+    ORDER BY order_date ASC
+  `;
+
     const [rows] = await db.query(sql, params);
     return rows;
   }
 
   static async getOrdersChart(startDate, endDate) {
     const { whereClause, params } = this.getDateFilter(startDate, endDate);
+
     const sql = `
-      SELECT 
-        DATE_FORMAT(created_at, '%d/%m') AS name,
-        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
-        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
-        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled
-      FROM orders
-      ${whereClause}
-      GROUP BY DATE(created_at)
-      ORDER BY DATE(created_at) ASC
-    `;
+    SELECT 
+      DATE(created_at) AS order_date,
+      DATE_FORMAT(DATE(created_at), '%d/%m') AS name,
+      SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+      SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
+      SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled
+    FROM orders
+    ${whereClause}
+    GROUP BY order_date
+    ORDER BY order_date ASC
+  `;
+
     const [rows] = await db.query(sql, params);
     return rows;
   }
