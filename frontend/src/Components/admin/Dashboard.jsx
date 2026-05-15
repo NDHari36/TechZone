@@ -20,7 +20,7 @@ import {
 } from "recharts";
 import dashboardApi from "../../api/dashboardApi";
 
-function Dashboard({ setActiveTab }) {
+function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const today = new Date();
@@ -127,7 +127,6 @@ function Dashboard({ setActiveTab }) {
           />
           <span className="text-gray-400 font-bold">-</span>
           <input
-            input
             type="date"
             value={endDate}
             min={startDate}
@@ -163,7 +162,11 @@ function Dashboard({ setActiveTab }) {
         </div>
 
         <div
-          onClick={() => setActiveTab("orders")}
+          onClick={() => {
+            document
+              .getElementById("recent-orders")
+              ?.scrollIntoView({ behavior: "smooth" });
+          }}
           className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm cursor-pointer hover:border-blue-300 hover:shadow-md transition-all group"
         >
           <div className="flex justify-between items-start">
@@ -339,13 +342,21 @@ function Dashboard({ setActiveTab }) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+      <div
+        id="recent-orders"
+        className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+      >
+        {" "}
         <div className="p-6 border-b border-gray-200 flex justify-between items-center">
           <h3 className="text-lg font-black text-gray-900 uppercase tracking-wider">
             Đơn hàng gần đây
           </h3>
           <button
-            onClick={() => setActiveTab("orders")}
+            onClick={() => {
+              document
+                .getElementById("recent-orders")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }}
             className="text-sm font-bold flex items-center text-gray-600 hover:text-blue-600 transition-colors"
           >
             Xem tất cả <ArrowUpRight className="h-4 w-4 ml-1" />

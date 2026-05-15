@@ -79,17 +79,32 @@ class Dashboard {
   }
 
   static async getRecentOrders(startDate, endDate) {
+    console.log("RUN GET RECENT ORDERS");
+
     const { whereClause, params } = this.getDateFilter(startDate, endDate, "o");
+
     const sql = `
-      SELECT 
-        o.code AS id, o.receiver_name AS customer, 
-        (SELECT product_name_snapshot FROM order_items WHERE order_id = o.id LIMIT 1) AS product, 
-        o.total, o.status, DATE_FORMAT(o.created_at, '%d/%m/%Y') AS date 
-      FROM orders o
-      ${whereClause}
-      ORDER BY o.created_at DESC LIMIT 10
-    `;
+    SELECT 
+      o.id,
+      o.code,
+      o.total,
+      o.status,
+      o.created_at,
+      u.full_name,
+      u.username,
+      u.phone,
+      u.email
+    FROM orders o
+    LEFT JOIN users u ON o.user_id = u.id
+    ${whereClause}
+    ORDER BY o.created_at DESC
+    LIMIT 10
+  `;
+
     const [rows] = await db.query(sql, params);
+
+    console.log(rows);
+
     return rows;
   }
 }
