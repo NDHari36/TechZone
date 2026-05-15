@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -17,6 +17,60 @@ import {
 } from "lucide-react";
 import productApi from "../api/productApi";
 import { CompareContext } from "../Components/CompareContext";
+
+const GROUP_ORDER = [
+  "Cấu hình & Bộ nhớ",
+  "Camera & Màn hình",
+  "Pin & Sạc",
+  "Tiện ích",
+  "Kết nối",
+  "Thiết kế & Chất liệu",
+];
+
+const SPEC_ITEM_ORDER = [
+  "Hệ điều hành",
+  "Chip xử lý (CPU)",
+  "Tốc độ CPU",
+  "Chip đồ họa (GPU)",
+  "RAM",
+  "Dung lượng lưu trữ",
+  "Dung lượng còn lại (khả dụng) khoảng",
+  "Danh bạ",
+  "Độ phân giải camera sau",
+  "Quay phim camera sau",
+  "Đèn Flash camera sau",
+  "Tính năng camera sau",
+  "Độ phân giải camera trước",
+  "Tính năng camera trước",
+  "Công nghệ màn hình",
+  "Độ phân giải màn hình",
+  "Màn hình rộng",
+  "Độ sáng tối đa",
+  "Mặt kính cảm ứng",
+  "Dung lượng pin",
+  "Loại pin",
+  "Hỗ trợ sạc tối đa",
+  "Sạc kèm theo máy",
+  "Công nghệ pin",
+  "Bảo mật nâng cao",
+  "Tính năng đặc biệt",
+  "Kháng nước, bụi",
+  "Ghi âm",
+  "Xem phim",
+  "Nghe nhạc",
+  "Mạng di động",
+  "SIM",
+  "Wifi",
+  "GPS",
+  "Bluetooth",
+  "Cổng kết nối/sạc",
+  "Jack tai nghe",
+  "Kết nối khác",
+  "Thiết kế",
+  "Chất liệu",
+  "Kích thước, khối lượng",
+  "Thời điểm ra mắt",
+];
 
 function Details() {
   const { id } = useParams();
@@ -37,7 +91,7 @@ function Details() {
     "Cấu hình & Bộ nhớ": true,
   });
   const searchParams = new URLSearchParams(window.location.search);
-  const selectedOrderId = searchParams.get("orderId");
+  const currentOrderId = searchParams.get("orderId");
   const { addToCompare, compareList, setShowBar } = useContext(CompareContext);
   const isComparing = compareList.find((item) => item.id === product?.id);
 
@@ -66,19 +120,14 @@ function Details() {
         const fetchedReviews = Array.isArray(reviewData)
           ? reviewData
           : reviewData.result || [];
-
-        const sortedReviews = [...fetchedReviews].sort(
-          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        setReviews(
+          fetchedReviews.sort(
+            (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+          ),
         );
-
-        setReviews(sortedReviews);
-
         const token = localStorage.getItem("authToken");
         if (token) {
           try {
-            const searchParams = new URLSearchParams(window.location.search);
-            const currentOrderId = searchParams.get("orderId");
-
             const checkRes = await productApi.checkCanReview(
               id,
               currentOrderId,
@@ -163,9 +212,9 @@ function Details() {
 
       localStorage.setItem("cartEvent", "updated:" + Date.now());
       window.dispatchEvent(new Event("cartUpdated"));
-      atoast.success("Đã thêm sản phẩm vào giỏ hàng");
+      toast.success("Đã thêm sản phẩm vào giỏ hàng");
     } catch (err) {
-      oast.error(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -209,11 +258,11 @@ function Details() {
       const fetchedReviews = Array.isArray(reviewData)
         ? reviewData
         : reviewData.result || reviewData.data || [];
-      const sortedReviews = [...fetchedReviews].sort(
-        (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+      setReviews(
+        fetchedReviews.sort(
+          (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
+        ),
       );
-
-      setReviews(sortedReviews);
       setReviewForm({ rating: 5, comment: "" });
       setCanReview(false);
       toast.success("Cảm ơn bạn đã đánh giá!");
@@ -225,133 +274,119 @@ function Details() {
       setIsSubmittingReview(false);
     }
   };
+  const specMap = useMemo(() => {
+    const map = new Map();
 
-  const GROUP_ORDER = [
-    "Cấu hình & Bộ nhớ",
-    "Camera & Màn hình",
-    "Pin & Sạc",
-    "Tiện ích",
-    "Kết nối",
-    "Thiết kế & Chất liệu",
-  ];
+    currentSpecs.forEach((spec) => {
+      const rawGroupName = String(spec.group_name || "Thông số khác").trim();
 
-  const SPEC_ITEM_ORDER = [
-    "Hệ điều hành",
-    "Chip xử lý (CPU)",
-    "Tốc độ CPU",
-    "Chip đồ họa (GPU)",
-    "RAM",
-    "Dung lượng lưu trữ",
-    "Dung lượng còn lại (khả dụng) khoảng",
-    "Danh bạ",
-    "Độ phân giải camera sau",
-    "Quay phim camera sau",
-    "Đèn Flash camera sau",
-    "Tính năng camera sau",
-    "Độ phân giải camera trước",
-    "Tính năng camera trước",
-    "Công nghệ màn hình",
-    "Độ phân giải màn hình",
-    "Màn hình rộng",
-    "Độ sáng tối đa",
-    "Mặt kính cảm ứng",
-    "Dung lượng pin",
-    "Loại pin",
-    "Hỗ trợ sạc tối đa",
-    "Sạc kèm theo máy",
-    "Công nghệ pin",
-    "Bảo mật nâng cao",
-    "Tính năng đặc biệt",
-    "Kháng nước, bụi",
-    "Ghi âm",
-    "Xem phim",
-    "Nghe nhạc",
-    "Mạng di động",
-    "SIM",
-    "Wifi",
-    "GPS",
-    "Bluetooth",
-    "Cổng kết nối/sạc",
-    "Jack tai nghe",
-    "Kết nối khác",
-    "Thiết kế",
-    "Chất liệu",
-    "Kích thước, khối lượng",
-    "Thời điểm ra mắt",
-  ];
+      const specName = String(spec.name || "").trim();
 
-  const specMap = new Map();
+      const specValue = String(spec.value_text || spec.value || "").trim();
 
-  currentSpecs.forEach((spec) => {
-    const rawGroupName = String(spec.group_name || "Thông số khác").trim();
-    const specName = String(spec.name || "").trim();
-    const specValue = String(spec.value_text || spec.value || "").trim();
+      if (!specName || !specValue) return;
 
-    if (!specName || !specValue) return;
+      let finalGroupName = rawGroupName;
 
-    let finalGroupName = rawGroupName;
-    const matchedGroup = GROUP_ORDER.find(
-      (go) => go.toLowerCase() === rawGroupName.toLowerCase(),
-    );
-    if (matchedGroup) {
-      finalGroupName = matchedGroup;
-    }
+      const matchedGroup = GROUP_ORDER.find(
+        (go) => go.toLowerCase() === rawGroupName.toLowerCase(),
+      );
 
-    const uniqueKey = `${finalGroupName}-${specName}`.toLowerCase();
-    specMap.set(uniqueKey, {
-      group_name: finalGroupName,
-      name: specName,
-      value_text: specValue,
-      unit: spec.unit ? String(spec.unit).trim() : "",
+      if (matchedGroup) {
+        finalGroupName = matchedGroup;
+      }
+
+      const uniqueKey = `${finalGroupName}-${specName}`.toLowerCase();
+
+      map.set(uniqueKey, {
+        group_name: finalGroupName,
+        name: specName,
+        value_text: specValue,
+        unit: spec.unit ? String(spec.unit).trim() : "",
+      });
     });
-  });
 
-  if (selectedVariant) {
-    if (selectedVariant.ram && selectedVariant.ram.trim() !== "") {
-      specMap.set("cấu hình & bộ nhớ-ram", {
+    if (selectedVariant?.ram?.trim()) {
+      map.set("cấu hình & bộ nhớ-ram", {
         group_name: "Cấu hình & Bộ nhớ",
         name: "RAM",
         value_text: selectedVariant.ram.trim(),
         unit: "",
       });
     }
-    if (selectedVariant.storage && selectedVariant.storage.trim() !== "") {
-      specMap.set("cấu hình & bộ nhớ-dung lượng lưu trữ", {
+
+    if (selectedVariant?.storage?.trim()) {
+      map.set("cấu hình & bộ nhớ-dung lượng lưu trữ", {
         group_name: "Cấu hình & Bộ nhớ",
         name: "Dung lượng lưu trữ",
         value_text: selectedVariant.storage.trim(),
         unit: "",
       });
     }
-  }
 
-  const groupedSpecs = {};
-  specMap.forEach((spec) => {
-    if (!groupedSpecs[spec.group_name]) {
-      groupedSpecs[spec.group_name] = [];
-    }
-    groupedSpecs[spec.group_name].push(spec);
-  });
+    return map;
+  }, [currentSpecs, selectedVariant]);
+  const { groupedSpecs, sortedGroups } = useMemo(() => {
+    const groupedSpecs = {};
 
-  Object.keys(groupedSpecs).forEach((groupName) => {
-    groupedSpecs[groupName].sort((a, b) => {
-      let idxA = SPEC_ITEM_ORDER.indexOf(a.name);
-      let idxB = SPEC_ITEM_ORDER.indexOf(b.name);
-      if (idxA === -1) idxA = 999;
-      if (idxB === -1) idxB = 999;
-      return idxA - idxB;
+    specMap.forEach((spec) => {
+      if (!groupedSpecs[spec.group_name]) {
+        groupedSpecs[spec.group_name] = [];
+      }
+      groupedSpecs[spec.group_name].push(spec);
     });
-  });
 
-  const sortedGroups = Object.keys(groupedSpecs).sort((a, b) => {
-    const indexA = GROUP_ORDER.indexOf(a);
-    const indexB = GROUP_ORDER.indexOf(b);
-    if (indexA === -1 && indexB === -1) return 0;
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-    return indexA - indexB;
-  });
+    Object.keys(groupedSpecs).forEach((groupName) => {
+      groupedSpecs[groupName].sort((a, b) => {
+        let idxA = SPEC_ITEM_ORDER.indexOf(a.name);
+        let idxB = SPEC_ITEM_ORDER.indexOf(b.name);
 
+        if (idxA === -1) idxA = 999;
+        if (idxB === -1) idxB = 999;
+
+        return idxA - idxB;
+      });
+    });
+
+    const sortedGroups = Object.keys(groupedSpecs).sort((a, b) => {
+      const indexA = GROUP_ORDER.indexOf(a);
+      const indexB = GROUP_ORDER.indexOf(b);
+
+      if (indexA === -1 && indexB === -1) return 0;
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+
+      return indexA - indexB;
+    });
+
+    return { groupedSpecs, sortedGroups };
+  }, [currentSpecs, selectedVariant]);
+  const handleStarFilter = (star) => () => {
+    setSelectedStar(star);
+  };
+  const filteredReviews = useMemo(() => {
+    return selectedStar === "all"
+      ? reviews
+      : reviews.filter((r) => Number(r.rating) === Number(selectedStar));
+  }, [reviews, selectedStar]);
+  const avgRating = useMemo(() => {
+    return reviews.length > 0
+      ? (
+          reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length
+        ).toFixed(1)
+      : 0;
+  }, [reviews]);
+  const ratingCounts = useMemo(() => {
+    const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+    reviews.forEach((r) => {
+      if (counts[r.rating] !== undefined) {
+        counts[r.rating]++;
+      }
+    });
+
+    return counts;
+  }, [reviews]);
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -370,20 +405,6 @@ function Details() {
         Không tìm thấy sản phẩm.
       </div>
     );
-  const filteredReviews =
-    selectedStar === "all"
-      ? reviews
-      : reviews.filter((r) => Number(r.rating) === Number(selectedStar));
-  const avgRating =
-    reviews.length > 0
-      ? (
-          reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length
-        ).toFixed(1)
-      : 0;
-  const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-  reviews.forEach((r) => {
-    if (ratingCounts[r.rating] !== undefined) ratingCounts[r.rating]++;
-  });
 
   return (
     <main className="min-h-screen bg-white pt-20 pb-10">
@@ -428,6 +449,8 @@ function Details() {
           <div className="flex items-center justify-center">
             <div className="w-full aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-300 flex items-center justify-center hover:shadow-lg transition-shadow duration-300">
               <img
+                loading="lazy"
+                decoding="async"
                 src={
                   images.find((img) => img.is_primary)?.image_url ||
                   images[0]?.image_url ||
@@ -619,9 +642,7 @@ function Details() {
 
                     <div
                       className={`overflow-hidden transition-all duration-300 ${
-                        isOpen
-                          ? "max-h-[2000px] opacity-100 mt-2"
-                          : "max-h-0 opacity-0"
+                        isOpen ? "opacity-100 mt-2 block" : "opacity-0 hidden"
                       }`}
                     >
                       <div className="px-5">
@@ -788,7 +809,7 @@ function Details() {
               {[5, 4, 3, 2, 1].map((star) => (
                 <button
                   key={star}
-                  onClick={() => setSelectedStar(star)}
+                  onClick={handleStarFilter(star)}
                   className={`px-4 py-2 rounded-xl border font-semibold flex items-center gap-1 transition ${
                     selectedStar === star
                       ? "bg-yellow-500 text-white border-yellow-500"
@@ -801,9 +822,9 @@ function Details() {
               ))}
             </div>
             {reviews.length > 0 ? (
-              filteredReviews.map((rev) => (
+              filteredReviews.slice(0, 10).map((rev) => (
                 <div
-                  key={rev.id}
+                  key={`${rev.id}-${rev.created_at}`}
                   className="pb-6 border-b border-gray-100 last:border-0 last:pb-0"
                 >
                   <div className="flex items-center gap-3 mb-2">

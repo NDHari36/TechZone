@@ -79,8 +79,6 @@ class Dashboard {
   }
 
   static async getRecentOrders(startDate, endDate) {
-    console.log("RUN GET RECENT ORDERS");
-
     const { whereClause, params } = this.getDateFilter(startDate, endDate, "o");
 
     const sql = `
@@ -102,8 +100,6 @@ class Dashboard {
   `;
 
     const [rows] = await db.query(sql, params);
-
-    console.log(rows);
 
     return rows;
   }
