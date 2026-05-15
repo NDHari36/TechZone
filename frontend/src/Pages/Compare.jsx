@@ -66,7 +66,9 @@ function Compare() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const res = await fetch("http://localhost:8081/api/brands");
+        const res = await fetch(
+          "https://techzone-api-wkxx.onrender.com/api/brands",
+        );
         const data = await res.json();
         if (data.result) setBrands(data.result);
       } catch (err) {
@@ -101,7 +103,7 @@ function Compare() {
         if (token) headers.Authorization = `Bearer ${token}`;
 
         const res = await fetch(
-          `http://localhost:8081/api/products?page=0&size=20&keyword=${encodeURIComponent(keyword)}`,
+          `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=20&keyword=${encodeURIComponent(keyword)}`,
           { headers },
         );
         const data = await res.json();

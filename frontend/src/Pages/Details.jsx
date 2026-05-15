@@ -147,14 +147,17 @@ function Details() {
         quantity: Number(quantity),
       };
 
-      const res = await fetch("http://localhost:8081/api/cart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const res = await fetch(
+        "https://techzone-api-wkxx.onrender.com/api/cart",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(body),
         },
-        body: JSON.stringify(body),
-      });
+      );
 
       if (!res.ok) throw new Error("Thêm vào giỏ hàng thất bại");
 

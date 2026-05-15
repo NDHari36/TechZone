@@ -8,7 +8,9 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const res = await fetch("http://localhost:8081/api/brands");
+        const res = await fetch(
+          "https://techzone-api-wkxx.onrender.com/api/brands",
+        );
         const data = await res.json();
         if (data.result) setBrands(data.result);
       } catch (err) {

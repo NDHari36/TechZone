@@ -17,7 +17,7 @@ export default function HomePage() {
         if (token) headers.Authorization = `Bearer ${token}`;
 
         const res = await fetch(
-          "http://localhost:8081/api/products?page=0&size=100",
+          "https://techzone-api-wkxx.onrender.com/api/products?page=0&size=100",
           { headers },
         );
         const data = await res.json();

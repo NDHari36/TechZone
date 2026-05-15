@@ -15,17 +15,20 @@ function SignIn() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8081/auth/access-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://techzone-api-wkxx.onrender.com/auth/access-token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            username: username,
+            password: password,
+          }),
         },
-        credentials: "include",
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Tên đăng nhập hoặc mật khẩu không chính xác");

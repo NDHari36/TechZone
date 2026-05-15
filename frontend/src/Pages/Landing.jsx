@@ -22,7 +22,7 @@ function Landing() {
             if (rawImage) {
               finalImage = rawImage.startsWith("http")
                 ? rawImage
-                : `http://localhost:8081${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+                : `https://techzone-api-wkxx.onrender.com${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
             }
             return {
               id: item.id,
