@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Dashboard from "./Dashboard"; // Import file Dashboard bạn vừa tạo
+import Dashboard from "./Dashboard";
 import ProductManager from "./ProductManager";
 import UserManager from "./UserManager";
 import OrderManager from "./OrderManager";
