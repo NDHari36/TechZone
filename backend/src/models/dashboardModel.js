@@ -46,7 +46,6 @@ class Dashboard {
     const [rows] = await db.query(sql, params);
     return rows;
   }
-
   static async getOrdersChart(startDate, endDate) {
     const { whereClause, params } = this.getDateFilter(startDate, endDate);
 
