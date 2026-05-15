@@ -153,7 +153,6 @@ function Dashboard({ setActiveTab }) {
                 </span>
                 <span className="text-sm font-black text-green-600">
                   {formatCurrency(data.overview.todayRevenue)}{" "}
-                  {/* Thay đổi ở đây */}
                 </span>
               </div>
             </div>
