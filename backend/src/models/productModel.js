@@ -9,96 +9,84 @@ class Product {
     minPrice = 0,
     maxPrice = 999999999,
   }) {
-    limit = Number(limit);
-    offset = Number(offset);
-    minPrice = Number(minPrice);
-    maxPrice = Number(maxPrice);
-
     let sql = `
-      SELECT 
-          p.id,
-          p.name,
-          p.category_id,
-          b.name AS brand_name,
-          c.name AS category_name,
+    SELECT 
+      p.id,
+      p.name,
+      p.category_id,
+      b.name AS brand_name,
+      c.name AS category_name,
 
-          (
-            SELECT image_url
-            FROM product_images
-            WHERE product_id = p.id
-            ORDER BY is_primary DESC, sort_order ASC, id ASC
-            LIMIT 1
-          ) AS image_url,
+      (
+        SELECT image_url
+        FROM product_images
+        WHERE product_id = p.id
+        ORDER BY is_primary DESC, sort_order ASC, id ASC
+        LIMIT 1
+      ) AS image_url,
 
-          (
-            SELECT MIN(price)
-            FROM product_variants
-            WHERE product_id = p.id
-          ) AS min_price,
+      (
+        SELECT MIN(price)
+        FROM product_variants
+        WHERE product_id = p.id
+      ) AS min_price,
 
-          (
-            SELECT SUM(i.quantity)
-            FROM inventories i
-            JOIN product_variants v ON i.variant_id = v.id
-            WHERE v.product_id = p.id
-          ) AS total_stock
+      (
+        SELECT COALESCE(SUM(i.quantity), 0)
+        FROM inventories i
+        JOIN product_variants v ON i.variant_id = v.id
+        WHERE v.product_id = p.id
+      ) AS total_stock
 
-      FROM products p
-      JOIN brands b ON p.brand_id = b.id
-      JOIN categories c ON p.category_id = c.id
+    FROM products p
+    JOIN brands b ON p.brand_id = b.id
+    JOIN categories c ON p.category_id = c.id
+    JOIN product_variants pv ON p.id = pv.product_id
 
-      WHERE p.is_active = 1
-    `;
+    WHERE p.is_active = 1
+  `;
 
     const params = [];
 
     if (keyword?.trim()) {
       sql += ` AND (p.name LIKE ? OR p.description LIKE ?) `;
-      const searchKey = `%${keyword}%`;
+      const searchKey = `%${keyword.trim()}%`;
       params.push(searchKey, searchKey);
     }
 
     if (brand?.trim()) {
       sql += ` AND b.name = ? `;
-      params.push(brand);
+      params.push(brand.trim());
     }
 
-    if (minPrice > 0) {
-      sql += `
-        AND EXISTS (
-          SELECT 1
-          FROM product_variants pv
-          WHERE pv.product_id = p.id
-          AND pv.price >= ?
-        )
-      `;
-      params.push(minPrice);
+    if (minPrice !== undefined && minPrice !== null) {
+      sql += ` AND pv.price >= ? `;
+      params.push(Number(minPrice));
     }
 
-    if (maxPrice < 999999999) {
-      sql += `
-        AND EXISTS (
-          SELECT 1
-          FROM product_variants pv
-          WHERE pv.product_id = p.id
-          AND pv.price <= ?
-        )
-      `;
-      params.push(maxPrice);
+    if (maxPrice !== undefined && maxPrice !== null) {
+      sql += ` AND pv.price <= ? `;
+      params.push(Number(maxPrice));
     }
 
     sql += `
-      ORDER BY p.created_at DESC
-      LIMIT ? OFFSET ?
-    `;
+    GROUP BY 
+      p.id,
+      p.name,
+      p.category_id,
+      b.name,
+      c.name
 
-    params.push(limit, offset);
+    ORDER BY p.created_at DESC
+    LIMIT ? OFFSET ?
+  `;
+
+    params.push(Number(limit), Number(offset));
 
     const [rows] = await db.query(sql, params);
 
     return rows;
   }
-
   static async getSuggestions(keyword) {
     const sql = `
       SELECT id, name
@@ -191,7 +179,6 @@ class Product {
 
       const [allSpecs] = await db.query(specsSql, [id]);
 
-      // OPTIMIZED O(n)
       const specMap = new Map();
 
       allSpecs.forEach((spec) => {
