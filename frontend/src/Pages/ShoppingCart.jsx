@@ -85,7 +85,6 @@ function ShoppingCart() {
       });
     }
   };
-
   const handleToggleSelection = (variantId) => {
     setSelectedItems((prev) => {
       const next = new Set(prev);
