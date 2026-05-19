@@ -16,7 +16,6 @@ export const CompareProvider = ({ children }) => {
       id: product.id,
       name: product.name,
 
-      // 🔥 thêm 2 field để Compare page hiểu "cùng loại"
       category: product.category || null,
       brand: product.brand || null,
 
