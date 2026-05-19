@@ -318,12 +318,6 @@ function Header() {
                   </div>
                 ) : searchResults.length > 0 ? (
                   searchResults.map((product) => {
-                    const image =
-                      product.thumbnailUrl ||
-                      product.images?.[0]?.image_url ||
-                      product.image ||
-                      "/images/img.jpg";
-
                     const price =
                       product.variants?.[0]?.price ||
                       product.min_price ||
@@ -337,14 +331,6 @@ function Header() {
                         onClick={() => handleSelectProduct(product)}
                         className="w-full flex items-center gap-4 px-5 py-4 hover:bg-[#2c2c2e] transition-colors border-b border-gray-800 last:border-0 text-left"
                       >
-                        <div className="w-14 h-14 rounded-xl bg-white p-2 flex items-center justify-center">
-                          <img
-                            src={image}
-                            alt={product.name}
-                            className="max-w-full max-h-full object-contain"
-                          />
-                        </div>
-
                         <div className="flex-1 overflow-hidden">
                           <h4 className="text-sm font-bold text-white truncate">
                             {product.name}

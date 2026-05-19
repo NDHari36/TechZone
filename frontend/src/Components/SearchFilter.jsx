@@ -159,12 +159,6 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
               </div>
             ) : searchResults.length > 0 ? (
               searchResults.map((product) => {
-                const image =
-                  product.thumbnailUrl ||
-                  product.images?.[0]?.image_url ||
-                  product.image ||
-                  "/images/img.jpg";
-
                 const price =
                   product.variants?.[0]?.price ||
                   product.min_price ||
@@ -178,14 +172,6 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
                     onClick={() => handleSelectProduct(product)}
                     className="w-full flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 text-left"
                   >
-                    <div className="w-14 h-14 bg-white rounded-xl border border-slate-100 p-2 flex items-center justify-center">
-                      <img
-                        src={image}
-                        alt={product.name}
-                        className="max-w-full max-h-full object-contain"
-                      />
-                    </div>
-
                     <div className="flex-1 overflow-hidden">
                       <h4 className="font-bold text-slate-900 truncate">
                         {product.name}
