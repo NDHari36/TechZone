@@ -51,8 +51,38 @@ export default function CompareBar() {
   useEffect(() => {
     const fetchSearch = async () => {
       if (!keyword.trim()) {
-        setSearchResults([]);
-        setShowDropdown(false);
+        // HIỂN THỊ SẢN PHẨM LIÊN QUAN (default suggestions)
+        const fetchDefault = async () => {
+          try {
+            const first = compareList?.[0];
+
+            const fallbackKeyword =
+              first?.category?.name || first?.brand?.name || first?.name || "";
+
+            const token = localStorage.getItem("authToken");
+            const headers = { "Content-Type": "application/json" };
+            if (token) headers.Authorization = `Bearer ${token}`;
+
+            const res = await fetch(
+              `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=20&keyword=${encodeURIComponent(
+                fallbackKeyword,
+              )}`,
+              { headers },
+            );
+
+            const data = await res.json();
+            const products =
+              data.result?.content || data.result?.data || data.result || [];
+
+            setSearchResults(Array.isArray(products) ? products : []);
+            setShowDropdown(true);
+          } catch (err) {
+            console.error("Lỗi load default products:", err);
+            setSearchResults([]);
+          }
+        };
+
+        fetchDefault();
         return;
       }
       setIsSearching(true);
@@ -277,9 +307,6 @@ export default function CompareBar() {
                 </div>
 
                 <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2">
-                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest self-center">
-                    Gợi ý:
-                  </span>
                   {brands.map((brand) => (
                     <button
                       key={brand.id}

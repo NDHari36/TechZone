@@ -15,11 +15,17 @@ export const CompareProvider = ({ children }) => {
     const compareItem = {
       id: product.id,
       name: product.name,
+
+      // 🔥 thêm 2 field để Compare page hiểu "cùng loại"
+      category: product.category || null,
+      brand: product.brand || null,
+
       image:
         product.images?.[0]?.image_url ||
         product.image_url ||
         product.image ||
         "/images/img.jpg",
+
       price:
         product.variants?.[0]?.price || product.min_price || product.price || 0,
     };
