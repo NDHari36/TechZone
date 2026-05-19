@@ -21,7 +21,7 @@ class Cart {
     ci.id, ci.variant_id as variantId, ci.qty as quantity, ci.unit_price_snapshot as price,
     pv.color, pv.ram, pv.storage, p.id as productId, p.name as productName,
     i.quantity as stock, -- Dòng này cực kỳ quan trọng
-    (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) AS productImage
+    (SELECT image_url FROM product_images WHERE product_id = p.id AND is_primary = 0 LIMIT 1) AS productImage
   FROM cart_items ci
   JOIN product_variants pv ON ci.variant_id = pv.id
   JOIN products p ON pv.product_id = p.id
