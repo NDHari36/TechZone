@@ -160,10 +160,10 @@ function OrderDetail() {
               </div>
               <div
                 className={`inline-block px-4 py-2 rounded-xl font-bold text-sm ${
-                  order.status === "Cancelled"
+                  order.status === "cancelled"
                     ? "bg-red-50 text-red-600"
-                    : order.status === "Completed" ||
-                        order.status === "Delivered"
+                    : order.status === "completed" ||
+                        order.status === "delivered"
                       ? "bg-green-50 text-green-600"
                       : "bg-blue-50 text-blue-600"
                 }`}
@@ -299,7 +299,7 @@ function OrderDetail() {
             </div>
           </div>
 
-          {order.status === "Pending" && (
+          {order.status === "pending" && (
             <div className="mt-8 pt-6 border-t border-gray-100 text-center">
               <button
                 onClick={handleCancelOrder}

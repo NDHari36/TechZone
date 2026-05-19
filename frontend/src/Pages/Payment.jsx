@@ -205,7 +205,7 @@ function Payment() {
     <main className="min-h-screen bg-white pb-20 pt-24">
       <div className="mx-auto max-w-6xl px-6">
         <h1 className="text-4xl font-black text-gray-900 mb-8 uppercase tracking-tight">
-          Thanh toán
+          Đặt Hàng
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
