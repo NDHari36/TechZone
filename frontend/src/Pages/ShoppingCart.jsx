@@ -147,7 +147,7 @@ function ShoppingCart() {
                       onClick={(e) => e.stopPropagation()}
                     />
                     <img
-                      src={`https://techzone-api-wkxx.onrender.com/api/cart/images/${item.productId}`}
+                      src={item.productImage || "/images/img.jpg"}
                       className="w-24 h-24 bg-white border border-gray-200 rounded-lg object-contain p-1 flex-shrink-0"
                       alt=""
                     />
