@@ -51,7 +51,6 @@ export default function CompareBar() {
   useEffect(() => {
     const fetchSearch = async () => {
       if (!keyword.trim()) {
-        // HIỂN THỊ SẢN PHẨM LIÊN QUAN (default suggestions)
         const fetchDefault = async () => {
           try {
             const first = compareList?.[0];

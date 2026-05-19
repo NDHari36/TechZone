@@ -325,14 +325,106 @@ ORDER BY o.created_at DESC
   }
 
   static async cancelOrder(orderId, userId) {
-    const sql = `UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending'`;
-    const [result] = await db.query(sql, [orderId, userId]);
-    return result.affectedRows > 0;
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+      const [orders] = await connection.query(
+        `SELECT id 
+       FROM orders
+       WHERE id = ? 
+         AND user_id = ? 
+         AND status = 'Pending'`,
+        [orderId, userId],
+      );
+
+      if (orders.length === 0) {
+        throw new Error("Không thể hủy đơn hàng");
+      }
+
+      const [items] = await connection.query(
+        `SELECT variant_id, qty
+       FROM order_items
+       WHERE order_id = ?`,
+        [orderId],
+      );
+
+      await connection.query(
+        `UPDATE orders
+       SET status = 'Cancelled'
+       WHERE id = ?`,
+        [orderId],
+      );
+
+      for (const item of items) {
+        await connection.query(
+          `UPDATE inventories
+         SET quantity = quantity + ?
+         WHERE variant_id = ?`,
+          [item.qty, item.variant_id],
+        );
+      }
+      await connection.commit();
+
+      return true;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
   }
   static async updateOrderStatus(orderId, newStatus) {
-    const sql = `UPDATE orders SET status = ? WHERE id = ?`;
-    const [result] = await db.query(sql, [newStatus, orderId]);
-    return result.affectedRows > 0;
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
+    try {
+      const [orders] = await connection.query(
+        `SELECT status FROM orders WHERE id = ?`,
+        [orderId],
+      );
+
+      if (orders.length === 0) {
+        throw new Error("Đơn hàng không tồn tại");
+      }
+
+      const currentStatus = orders[0].status;
+
+      const [result] = await connection.query(
+        `UPDATE orders SET status = ? WHERE id = ?`,
+        [newStatus, orderId],
+      );
+
+      if (
+        newStatus.toLowerCase() === "cancelled" &&
+        currentStatus.toLowerCase() !== "cancelled"
+      ) {
+        const [items] = await connection.query(
+          `SELECT variant_id, qty
+         FROM order_items
+         WHERE order_id = ?`,
+          [orderId],
+        );
+
+        for (const item of items) {
+          await connection.query(
+            `UPDATE inventories
+           SET quantity = quantity + ?
+           WHERE variant_id = ?`,
+            [item.qty, item.variant_id],
+          );
+        }
+      }
+
+      await connection.commit();
+
+      return result.affectedRows > 0;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
   }
 }
 

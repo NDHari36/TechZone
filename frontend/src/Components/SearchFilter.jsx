@@ -6,14 +6,12 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
 
   const [brands, setBrands] = useState([]);
 
-  // autocomplete states
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const searchRef = useRef(null);
 
-  // fetch brands
   useEffect(() => {
     const fetchBrands = async () => {
       try {
@@ -32,7 +30,6 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
     fetchBrands();
   }, []);
 
-  // click outside close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -47,7 +44,6 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
     };
   }, []);
 
-  // realtime search
   useEffect(() => {
     const fetchSearch = async () => {
       if (!keyword.trim()) {

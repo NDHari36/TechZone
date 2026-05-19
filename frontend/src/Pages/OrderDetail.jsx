@@ -61,10 +61,10 @@ function OrderDetail() {
     setCancelling(true);
     try {
       await orderApi.cancelOrder(id);
-      toast.success("Hủy đơn hàng thành công!"); // Sửa ở đây
+      toast.success("Hủy đơn hàng thành công!");
       await fetchDetail();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Không thể hủy đơn hàng."); // Sửa ở đây
+      toast.error(err.response?.data?.message || "Không thể hủy đơn hàng.");
     } finally {
       setCancelling(false);
     }
@@ -358,7 +358,7 @@ function OrderDetail() {
                     setIsSubmittingReview(true);
 
                     if (!selectedProduct?.productId) {
-                      toast.error("Lỗi: Không tìm thấy mã sản phẩm!"); // 1. Sửa lỗi ID
+                      toast.error("Lỗi: Không tìm thấy mã sản phẩm!");
                       return;
                     }
 
@@ -371,7 +371,7 @@ function OrderDetail() {
 
                     await productApi.addReview(payload);
 
-                    toast.success("Đánh giá sản phẩm thành công!"); // 2. Sửa thành công
+                    toast.success("Đánh giá sản phẩm thành công!");
                     setOpenReview(false);
 
                     setOrder((prevOrder) => {
@@ -405,7 +405,7 @@ function OrderDetail() {
                     const msg =
                       error.response?.data?.message ||
                       "Có lỗi xảy ra khi gửi đánh giá";
-                    toast.error("Lỗi: " + msg); // 3. Sửa thông báo catch lỗi
+                    toast.error("Lỗi: " + msg);
                   } finally {
                     setIsSubmittingReview(false);
                   }

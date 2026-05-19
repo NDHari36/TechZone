@@ -114,7 +114,6 @@ function Header() {
     return () => clearInterval(intervalId);
   }, [isLoggedIn]);
 
-  // realtime autocomplete
   useEffect(() => {
     const fetchSearch = async () => {
       if (!searchValue.trim()) {
@@ -162,7 +161,6 @@ function Header() {
     return () => clearTimeout(timer);
   }, [searchValue]);
 
-  // click outside close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
