@@ -109,3 +109,36 @@ exports.login = async (req, res) => {
     });
   }
 };
+exports.resetPasswordDefault = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const defaultPassword = "123456";
+
+    const salt = await bcrypt.genSalt(10);
+
+    const hashedPassword = await bcrypt.hash(defaultPassword, salt);
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        password: hashedPassword,
+      },
+      { new: true },
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User không tồn tại",
+      });
+    }
+
+    res.json({
+      message: "Reset password thành công",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
