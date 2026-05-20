@@ -40,6 +40,7 @@ const OrderManager = () => {
       const res = await orderApi.getAll();
 
       const data = res.data || res;
+
       let orderList = Array.isArray(data)
         ? data
         : data.result?.content ||
@@ -126,7 +127,7 @@ const OrderManager = () => {
     try {
       const res = await orderApi.getByIdAdmin(order.id);
       const details = res.result || res.data || {};
-
+      console.log(details);
       if (details && Array.isArray(details.items)) {
         details.items = details.items
           .filter((i) => i)
@@ -191,7 +192,6 @@ const OrderManager = () => {
         );
     }
   };
-
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <Toaster
@@ -479,7 +479,16 @@ const OrderManager = () => {
                                           ₫
                                         </span>
                                       </div>
-
+                                      <div className="flex justify-between text-sm text-orange-600 font-medium">
+                                        <span>Giảm giá sản phẩm:</span>
+                                        <span>
+                                          -
+                                          {Number(
+                                            expandedDetails.discount_total || 0,
+                                          ).toLocaleString("vi-VN")}{" "}
+                                          ₫
+                                        </span>
+                                      </div>
                                       <div className="flex justify-between text-sm text-gray-600 font-medium">
                                         <span>Phí vận chuyển:</span>
                                         <span>
