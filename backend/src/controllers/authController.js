@@ -115,28 +115,17 @@ exports.resetPasswordDefault = async (req, res) => {
 
     const defaultPassword = "123456";
 
-    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
-    const hashedPassword = await bcrypt.hash(defaultPassword, salt);
-
-    const user = await User.findByIdAndUpdate(
-      id,
-      {
-        password: hashedPassword,
-      },
-      { new: true },
-    );
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User không tồn tại",
-      });
-    }
+    await User.updatePassword(id, hashedPassword);
 
     res.json({
       message: "Reset password thành công",
+      password: "123456",
     });
   } catch (error) {
+    console.error(error);
+
     res.status(500).json({
       message: error.message,
     });
