@@ -111,17 +111,18 @@ exports.login = async (req, res) => {
 };
 exports.resetPasswordDefault = async (req, res) => {
   try {
-    const { id } = req.params;
+    const start = 1;
+    const end = 100;
 
     const defaultPassword = "123456";
-
     const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
-    await User.updatePassword(id, hashedPassword);
+    for (let id = start; id <= end; id++) {
+      await User.updatePassword(id, hashedPassword);
+    }
 
     res.json({
-      message: "Reset password thành công",
-      password: "123456",
+      message: `Reset password từ user ${start} đến ${end} thành công`,
     });
   } catch (error) {
     console.error(error);

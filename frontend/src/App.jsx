@@ -21,6 +21,7 @@ import Orders from "./Pages/Orders";
 import OrderDetail from "./Pages/OrderDetail";
 import Admin from "./Components/admin/Admin";
 import Compare from "./Pages/Compare";
+import ResetPass from "./Pages/ForgotPass";
 
 const socket = io("https://techzone-api-wkxx.onrender.com");
 
@@ -70,7 +71,7 @@ function App() {
           <Route path="/Details/:id" element={<Details />} />
           <Route path="/product/detail/:id" element={<Details />} />
           <Route path="/compare" element={<Compare />} />
-
+          <Route path="/resetsssssssspassword" element={<ResetPass />} />
           <Route
             path="/profile"
             element={

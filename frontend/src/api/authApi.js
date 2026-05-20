@@ -30,8 +30,28 @@ export async function register(payload) {
     throw new Error(message);
   }
 }
+export async function resetPassword(userId) {
+  try {
+    const response = await api.put(`/auth/reset-password-default/${userId}`);
+
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || "Reset password thất bại";
+
+    throw new Error(message);
+  }
+}
+export async function resetPasswordRange(start = 1, end = 100) {
+  for (let id = start; id <= end; id++) {
+    await resetPassword(id);
+  }
+
+  return true;
+}
 
 export default {
   login,
   register,
+  resetPassword,
+  resetPasswordRange,
 };

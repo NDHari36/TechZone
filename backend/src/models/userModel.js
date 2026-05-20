@@ -173,17 +173,6 @@ class User {
       connection.release();
     }
   }
-  static async updatePassword(id, password_hash) {
-    const sql = `
-      UPDATE users
-      SET password_hash = ?
-      WHERE id = ?
-    `;
-
-    const [result] = await db.execute(sql, [password_hash, id]);
-
-    return result;
-  }
 }
 
 module.exports = User;
