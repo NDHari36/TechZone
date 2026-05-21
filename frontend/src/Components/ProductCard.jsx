@@ -29,9 +29,11 @@ function ProductCard({ product, variant = "default" }) {
       await cartApi.addToCart(vId, 1);
 
       window.dispatchEvent(new Event("cartUpdated"));
+
       toast.success("Đã thêm vào giỏ hàng");
     } catch (err) {
       console.error("Add to cart failed", err);
+
       toast.error(
         "Không thể thêm vào giỏ hàng: " +
           (err.response?.data?.message || err.message),

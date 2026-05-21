@@ -12,14 +12,16 @@ export async function getCart() {
 
 export async function addToCart(variantId, quantity = 1) {
   try {
-    const response = await api.post("/cart/", {
-      variantId: variantId,
-      quantity: quantity,
+    const response = await api.post(`/cart/${variantId}`, {
+      variantId,
+      quantity,
     });
+
     return response.data;
   } catch (error) {
     const message =
       error.response?.data?.message || "Không thể thêm vào giỏ hàng";
+
     throw new Error(message);
   }
 }
