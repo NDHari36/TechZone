@@ -14,7 +14,7 @@ import {
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState(
-    localStorage.getItem("adminActiveTab") || "dashboard",
+    sessionStorage.getItem("adminActiveTab") || "dashboard",
   );
   const navItems = [
     { id: "dashboard", label: "Tổng quan", icon: <PieChart size={20} /> },
@@ -27,7 +27,7 @@ const Admin = () => {
     },
   ];
   React.useEffect(() => {
-    localStorage.setItem("adminActiveTab", activeTab);
+    sessionStorage.setItem("adminActiveTab", activeTab);
   }, [activeTab]);
   return (
     <div className="flex min-h-screen bg-gray-50 overflow-hidden">
@@ -65,7 +65,8 @@ const Admin = () => {
           <button
             onClick={() => {
               localStorage.removeItem("authToken");
-              window.location.href = "/login";
+              localStorage.removeItem("adminActiveTab");
+              window.location.href = "/signin";
             }}
             className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl font-bold text-red-600 border-2 border-red-100 hover:bg-red-50 hover:border-red-200 transition-colors"
           >
