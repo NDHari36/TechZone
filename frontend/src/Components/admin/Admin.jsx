@@ -65,8 +65,9 @@ const Admin = () => {
           <button
             onClick={() => {
               localStorage.removeItem("authToken");
-              localStorage.removeItem("adminActiveTab");
-              window.location.href = "/signin";
+              sessionStorage.removeItem("adminActiveTab");
+              window.location.href =
+                "https://tech-zone-eight.vercel.app/signin";
             }}
             className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl font-bold text-red-600 border-2 border-red-100 hover:bg-red-50 hover:border-red-200 transition-colors"
           >
