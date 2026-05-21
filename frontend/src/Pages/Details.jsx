@@ -197,7 +197,7 @@ function Details() {
       };
 
       const res = await fetch(
-        `https://techzone-api-wkxx.onrender.com/api/cart/${variantId}`,
+        `https://techzone-api-wkxx.onrender.com/api/cart/${selectedVariant.id}`,
         {
           method: "POST",
           headers: {
