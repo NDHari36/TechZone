@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dashboard from "./Dashboard";
 import ProductManager from "./ProductManager";
 import UserManager from "./UserManager";
@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   PieChart,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState(
@@ -26,7 +27,8 @@ const Admin = () => {
       icon: <ShoppingCart size={20} />,
     },
   ];
-  React.useEffect(() => {
+  const navigate = useNavigate();
+  useEffect(() => {
     sessionStorage.setItem("adminActiveTab", activeTab);
   }, [activeTab]);
   return (
@@ -66,6 +68,7 @@ const Admin = () => {
             onClick={() => {
               localStorage.removeItem("authToken");
               sessionStorage.removeItem("adminActiveTab");
+              setActiveTab("dashboard");
               navigate("/signin");
             }}
             className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl font-bold text-red-600 border-2 border-red-100 hover:bg-red-50 hover:border-red-200 transition-colors"
