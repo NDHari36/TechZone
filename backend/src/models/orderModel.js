@@ -76,8 +76,11 @@ class Order {
 
       const shippingFee = subtotal > 500000 ? 0 : 30000;
       const totalAmount = subtotal + shippingFee - discountTotal;
-      const orderCode = "ORD-" + Date.now();
-
+      const orderCode =
+        "ORD-" +
+        Date.now() +
+        "-" +
+        Math.random().toString(36).substring(2, 8).toUpperCase();
       const [orderResult] = await connection.query(
         `INSERT INTO orders (
           user_id, code, status, subtotal, discount_total, shipping_fee, total, 
