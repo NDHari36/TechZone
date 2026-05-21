@@ -24,8 +24,6 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const today = new Date();
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(today.getDate() - 30);
 
   const formatDate = (date) => date.toISOString().split("T")[0];
 
