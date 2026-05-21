@@ -10,7 +10,7 @@ class Dashboard {
       whereClause = `WHERE DATE(${prefix}created_at) BETWEEN ? AND ?`;
       params = [startDate, endDate];
     } else {
-      whereClause = `WHERE ${prefix}created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)`;
+      whereClause = `WHERE ${prefix}created_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01')`;
     }
     return { whereClause, params };
   }
