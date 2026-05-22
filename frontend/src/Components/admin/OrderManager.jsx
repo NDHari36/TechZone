@@ -70,7 +70,7 @@ const OrderManager = () => {
     const matchMonth = monthFilter
       ? (() => {
           const date = new Date(order.created_at);
-          const orderMonth = date.toISOString().slice(0, 7); // "YYYY-MM"
+          const orderMonth = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
           return orderMonth === monthFilter;
         })()
       : true;
