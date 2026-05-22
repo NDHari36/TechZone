@@ -20,7 +20,7 @@ import orderApi from "../../api/orderApi";
 
 const OrderManager = () => {
   const [orders, setOrders] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchOrderCode, setSearchOrderCode] = useState("");
 
