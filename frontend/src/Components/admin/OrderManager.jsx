@@ -20,9 +20,10 @@ import orderApi from "../../api/orderApi";
 
 const OrderManager = () => {
   const [orders, setOrders] = useState([]);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState("asc");
   const [statusFilter, setStatusFilter] = useState("all");
   const [searchOrderCode, setSearchOrderCode] = useState("");
+  const [monthFilter, setMonthFilter] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -66,7 +67,15 @@ const OrderManager = () => {
       ? orderCode.toLowerCase().includes(searchOrderCode.toLowerCase())
       : true;
 
-    return matchStatus && matchSearch;
+    const matchMonth = monthFilter
+      ? (() => {
+          const date = new Date(order.created_at);
+          const orderMonth = date.toISOString().slice(0, 7); // "YYYY-MM"
+          return orderMonth === monthFilter;
+        })()
+      : true;
+
+    return matchStatus && matchSearch && matchMonth;
   });
 
   const sortedOrders = [...filteredOrders].sort((a, b) => {
@@ -210,6 +219,12 @@ const OrderManager = () => {
             <h1 className="text-2xl font-black uppercase text-gray-900">
               Quản lý đơn hàng
             </h1>
+            <input
+              type="month"
+              value={monthFilter}
+              onChange={(e) => setMonthFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-xl bg-white outline-none focus:ring-1 focus:ring-gray-900"
+            />
           </div>
           <div className="flex items-center gap-3">
             <input
