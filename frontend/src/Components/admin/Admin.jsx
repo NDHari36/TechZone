@@ -31,6 +31,7 @@ const Admin = () => {
   useEffect(() => {
     sessionStorage.setItem("adminActiveTab", activeTab);
   }, [activeTab]);
+
   return (
     <div className="flex min-h-screen bg-gray-50 overflow-hidden">
       <aside className="w-72 bg-white border-r border-gray-200 flex flex-col shadow-sm z-10">
