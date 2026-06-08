@@ -1,7 +1,6 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
-
 import ProtectedRoute from "./ProtectedRoute";
 import { CompareProvider } from "./Components/CompareContext";
 import CompareBar from "./Components/CompareBar";
@@ -23,10 +22,13 @@ import Admin from "./Components/admin/Admin";
 import Compare from "./Pages/Compare";
 import ResetPass from "./Pages/ForgotPass";
 
-const socket = io("https://techzone-api-wkxx.onrender.com");
+function AppContent() {
+  const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const navigate = useNavigate();
 
-function App() {
   useEffect(() => {
+    const socket = io(API_BASE_URL);
+
     socket.on("force_logout", (data) => {
       const userStr = localStorage.getItem("user");
       if (!userStr) return;
@@ -43,7 +45,7 @@ function App() {
           alert(
             "Tài khoản của bạn vừa bị Quản trị viên khóa. Bạn đã bị đăng xuất!",
           );
-          window.location.href = "/signin";
+          navigate("/signin");
         }
       } catch (err) {
         console.error("Lỗi khi ép đăng xuất:", err);
@@ -51,70 +53,85 @@ function App() {
     });
 
     return () => {
-      socket.off("force_logout");
+      socket.disconnect();
     };
-  }, []);
+  }, [API_BASE_URL, navigate]);
 
+  return (
+    <>
+      <ScrollToTop />
+      <Header />
+
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/store" element={<Home />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/Category" element={<Catogory />} />
+        <Route path="/product/detail/:id" element={<Details />} />
+        <Route path="/compare" element={<Compare />} />
+        <Route path="/reset-password" element={<ResetPass />} />
+
+        <Route
+          path="/Shopping-Cart"
+          element={
+            <ProtectedRoute>
+              <ShoppingCart />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pay"
+          element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowAdminOnly={true}>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+
+      <CompareBar />
+    </>
+  );
+}
+
+function App() {
   return (
     <CompareProvider>
       <BrowserRouter>
-        <ScrollToTop />
-        <Header />
-
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/store" element={<Home />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/Category" element={<Catogory />} />
-          <Route path="/Shopping-Cart" element={<ShoppingCart />} />
-          <Route path="/Details/:id" element={<Details />} />
-          <Route path="/product/detail/:id" element={<Details />} />
-          <Route path="/compare" element={<Compare />} />
-          <Route path="/resetsssssssspassword" element={<ResetPass />} />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/pay"
-            element={
-              <ProtectedRoute>
-                <Payment />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <Orders />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders/:id"
-            element={
-              <ProtectedRoute>
-                <OrderDetail />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute allowAdminOnly={true}>
-                <Admin />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-
-        <CompareBar />
+        <AppContent />
       </BrowserRouter>
     </CompareProvider>
   );

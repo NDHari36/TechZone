@@ -7,6 +7,7 @@ function Landing() {
   const [heroProducts, setHeroProducts] = useState([]);
   const [loadingHero, setLoadingHero] = useState(true);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -22,7 +23,7 @@ function Landing() {
             if (rawImage) {
               finalImage = rawImage.startsWith("http")
                 ? rawImage
-                : `https://techzone-api-wkxx.onrender.com${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
+                : `${API_BASE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
             }
             return {
               id: item.id,

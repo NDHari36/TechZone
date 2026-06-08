@@ -1,6 +1,310 @@
 const db = require("../config/db");
 
+// Constants
+const ORDER_STATUS = {
+  PENDING: "pending",
+  PAID: "paid",
+  CANCELLED: "cancelled",
+  SHIPPED: "shipped",
+};
+
+const ORDER_CONFIG = {
+  CODE_PREFIX: "ORD",
+  DEFAULT_SHIPPING_FEE: 0,
+};
+
+// Reusable SQL Fragment
+const HAS_REVIEWED_SUBQUERY = `
+  IF(
+    EXISTS(
+      SELECT 1 
+      FROM reviews r 
+      WHERE r.user_id = o.user_id 
+        AND r.product_id = pv.product_id 
+        AND r.order_id = o.id
+    ), 1, 0
+  ) AS hasReviewed
+`;
+
 class Order {
+  static get STATUS() {
+    return ORDER_STATUS;
+  }
+
+  static get CONFIG() {
+    return ORDER_CONFIG;
+  }
+
+  static async getConnection() {
+    return await db.getConnection();
+  }
+
+  // Transaction Helper Wrapper
+  static async withTransaction(callback) {
+    const connection = await db.getConnection();
+    try {
+      await connection.beginTransaction();
+      const result = await callback(connection);
+      await connection.commit();
+      return result;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  static async getAddress(connection, addressId, userId) {
+    const [rows] = await connection.query(
+      `SELECT
+        full_name AS receiver_name,
+        phone AS receiver_phone,
+        line1 AS ship_line1,
+        ward AS ship_ward,
+        district AS ship_district,
+        city AS ship_city
+      FROM user_addresses
+      WHERE id = ? AND user_id = ?`,
+      [addressId, userId],
+    );
+
+    return rows[0];
+  }
+
+  // Khóa dòng inventories theo ID tăng dần để ngăn chặn triệt để Deadlock và tránh khóa lan truyền sang các bảng tĩnh
+  static async lockInventories(connection, variantIds) {
+    if (!variantIds || variantIds.length === 0) return [];
+
+    // Loại bỏ các ID trùng lặp và sắp xếp tăng dần để duy trì Lock Ordering nhất quán
+    const sortedUniqueIds = [...new Set(variantIds)].sort((a, b) => a - b);
+    const placeholders = sortedUniqueIds.map(() => "?").join(",");
+
+    const [rows] = await connection.query(
+      `SELECT variant_id, quantity AS stock
+       FROM inventories
+       WHERE variant_id IN (${placeholders}) FOR UPDATE`,
+      sortedUniqueIds,
+    );
+    return rows;
+  }
+
+  // Đọc giỏ hàng thuần không khóa bảng tĩnh
+  static async getCartItems(connection, cartItemIds) {
+    const placeholders = cartItemIds.map(() => "?").join(",");
+
+    const [rows] = await connection.query(
+      `SELECT
+        ci.id AS cart_item_id,
+        ci.variant_id,
+        ci.qty,
+        pv.price,
+        p.name AS product_name,
+        pv.sku
+      FROM cart_items ci
+      JOIN product_variants pv ON ci.variant_id = pv.id
+      JOIN products p ON pv.product_id = p.id
+      WHERE ci.id IN (${placeholders})`,
+      cartItemIds,
+    );
+
+    return rows;
+  }
+
+  static async getCoupon(connection, couponId) {
+    const [rows] = await connection.query(
+      `SELECT id, discount_value, is_active, end_at
+       FROM coupons
+       WHERE id = ? FOR UPDATE`,
+      [couponId],
+    );
+
+    return rows[0];
+  }
+
+  static async insertOrder(connection, data) {
+    const [result] = await connection.query(
+      `INSERT INTO orders (
+        user_id,
+        code,
+        status,
+        subtotal,
+        discount_total,
+        shipping_fee,
+        total,
+        receiver_name,
+        receiver_phone,
+        ship_line1,
+        ship_ward,
+        ship_district,
+        ship_city 
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        data.userId,
+        data.code,
+        data.status,
+        data.subtotal,
+        data.discountTotal,
+        data.shippingFee,
+        data.total,
+        data.receiver_name,
+        data.receiver_phone,
+        data.ship_line1,
+        data.ship_ward,
+        data.ship_district,
+        data.ship_city || data.ship_city_snapshot || data.city || "",
+      ],
+    );
+
+    return result.insertId;
+  }
+
+  static async createOrderItemsBatch(connection, items) {
+    if (!items || items.length === 0) return;
+
+    const values = items.map((item) => [
+      item.orderId,
+      item.variant_id,
+      item.product_name,
+      item.sku,
+      item.price,
+      item.qty,
+      item.lineTotal,
+    ]);
+
+    await connection.query(
+      `INSERT INTO order_items (
+        order_id,
+        variant_id,
+        product_name_snapshot,
+        variant_snapshot,
+        unit_price_snapshot,
+        qty,
+        line_total
+      )
+      VALUES ?`,
+      [values],
+    );
+  }
+
+  // CHUẨN HOÁ PHÂN TẦNG: Chỉ trả về affectedRows cho Service quyết định ném lỗi, không tự ý quăng lỗi nghiệp vụ ở Model
+  static async updateInventory(connection, variantId, qty) {
+    const [result] = await connection.query(
+      `UPDATE inventories
+       SET quantity = quantity - ?
+       WHERE variant_id = ? AND quantity >= ?`,
+      [qty, variantId, qty],
+    );
+    return result.affectedRows;
+  }
+
+  // Tăng tồn kho khi đơn hàng bị hủy
+  static async incrementInventory(connection, variantId, qty) {
+    await connection.query(
+      `UPDATE inventories
+       SET quantity = quantity + ?
+       WHERE variant_id = ?`,
+      [qty, variantId],
+    );
+  }
+
+  static async deleteCartItems(connection, cartItemIds) {
+    const placeholders = cartItemIds.map(() => "?").join(",");
+
+    await connection.query(
+      `DELETE FROM cart_items
+       WHERE id IN (${placeholders})`,
+      cartItemIds,
+    );
+  }
+
+  static async saveCoupon(connection, orderId, couponId, discount) {
+    await connection.query(
+      `INSERT INTO order_coupons
+      (order_id, coupon_id, discount_applied)
+      VALUES (?, ?, ?)`,
+      [orderId, couponId, discount],
+    );
+  }
+
+  // CHUẨN HOÁ KIẾN TRÚC: Chỉ trả về mảng kết quả dữ liệu thô (raw data rows) từ database
+  static async getOrderByIdAdmin(orderId) {
+    const [rows] = await db.execute(
+      ` SELECT o.*,
+        oi.variant_id,
+        pv.product_id AS productId,   
+        oi.product_name_snapshot AS productName,
+        oi.unit_price_snapshot AS price,
+        oi.qty AS quantity,
+        oi.line_total,
+
+        (SELECT image_url 
+         FROM product_images 
+         WHERE product_id = pv.product_id 
+         ORDER BY is_primary DESC 
+         LIMIT 1) AS productImage,
+
+        ${HAS_REVIEWED_SUBQUERY}
+
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN product_variants pv ON oi.variant_id = pv.id
+        WHERE o.id = ?`,
+      [orderId],
+    );
+    return rows;
+  }
+
+  static async getOrdersByUserId(userId) {
+    const [rows] = await db.execute(
+      `
+    SELECT
+      o.id AS orderId,
+      o.code,
+      o.status,
+      o.total,
+      o.created_at AS orderDate,
+
+      oi.id AS orderItemId,
+      oi.variant_id AS variantId,
+
+      pv.product_id AS productId,
+
+      oi.product_name_snapshot AS productName,
+      oi.unit_price_snapshot AS price,
+      oi.qty AS quantity,
+
+      (
+        SELECT pi.image_url
+        FROM product_images pi
+        WHERE pi.product_id = pv.product_id
+        ORDER BY pi.is_primary DESC, pi.id ASC
+        LIMIT 1
+      ) AS productImage,
+
+      ${HAS_REVIEWED_SUBQUERY}
+
+    FROM orders o
+    INNER JOIN order_items oi
+      ON o.id = oi.order_id
+
+    INNER JOIN product_variants pv
+      ON oi.variant_id = pv.id
+
+    WHERE o.user_id = ?
+
+    ORDER BY
+      o.created_at DESC,
+      o.id DESC,
+      oi.id ASC
+    `,
+      [userId],
+    );
+
+    return rows;
+  }
+
   static async getAll() {
     const sql = `
       SELECT 
@@ -16,418 +320,76 @@ class Order {
     return rows;
   }
 
-  static async createOrder(userId, { addressId, note, cartItemIds, couponId }) {
-    const connection = await db.getConnection();
-    await connection.beginTransaction();
-
-    try {
-      const [addressRows] = await connection.query(
-        `SELECT full_name as receiver_name, phone as receiver_phone, line1 as ship_line1, 
-                ward as ship_ward, district as ship_district, city as ship_city 
-         FROM user_addresses 
-         WHERE id = ? AND user_id = ?`,
-        [addressId, userId],
-      );
-
-      if (addressRows.length === 0)
-        throw new Error("Địa chỉ giao hàng không hợp lệ.");
-      const address = addressRows[0];
-
-      const placeholders = cartItemIds.map(() => "?").join(",");
-      const [items] = await connection.query(
-        `SELECT ci.id as cart_item_id, ci.variant_id, ci.qty, pv.price, p.name as product_name, pv.sku, i.quantity as stock
-         FROM cart_items ci
-         JOIN product_variants pv ON ci.variant_id = pv.id
-         JOIN products p ON pv.product_id = p.id
-         JOIN inventories i ON pv.id = i.variant_id
-         WHERE ci.id IN (${placeholders})`,
-        [...cartItemIds],
-      );
-
-      if (items.length === 0) throw new Error("Sản phẩm không hợp lệ.");
-
-      for (const item of items) {
-        if (item.qty > item.stock) {
-          throw new Error(
-            `Sản phẩm ${item.product_name} chỉ còn ${item.stock} máy trong kho.`,
-          );
-        }
-      }
-
-      const subtotal = items.reduce(
-        (sum, item) => sum + item.price * item.qty,
-        0,
-      );
-      let discountTotal = 0;
-
-      if (couponId) {
-        const [couponRows] = await connection.query(
-          `SELECT * FROM coupons WHERE id = ? AND is_active = 1 AND (end_at IS NULL OR end_at > NOW())`,
-          [couponId],
-        );
-        if (couponRows.length > 0) {
-          const cp = couponRows[0];
-          if (subtotal >= (cp.min_order || 0)) {
-            discountTotal =
-              cp.type === "percent" ? (subtotal * cp.value) / 100 : cp.value;
-          }
-        }
-      }
-
-      const shippingFee = subtotal > 500000 ? 0 : 30000;
-      const totalAmount = subtotal + shippingFee - discountTotal;
-      const orderCode =
-        "ORD-" +
-        Date.now() +
-        "-" +
-        Math.random().toString(36).substring(2, 8).toUpperCase();
-      const [orderResult] = await connection.query(
-        `INSERT INTO orders (
-          user_id, code, status, subtotal, discount_total, shipping_fee, total, 
-          receiver_name, receiver_phone, ship_line1, ship_ward, ship_district, ship_city
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          userId,
-          orderCode,
-          "Pending",
-          subtotal,
-          discountTotal,
-          shippingFee,
-          totalAmount,
-          address.receiver_name,
-          address.receiver_phone,
-          address.ship_line1,
-          address.ship_ward,
-          address.ship_district,
-          address.ship_city,
-        ],
-      );
-      const orderId = orderResult.insertId;
-
-      for (const item of items) {
-        await connection.query(
-          `INSERT INTO order_items (order_id, variant_id, product_name_snapshot, variant_snapshot, unit_price_snapshot, qty, line_total)
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [
-            orderId,
-            item.variant_id,
-            item.product_name,
-            item.sku,
-            item.price,
-            item.qty,
-            item.price * item.qty,
-          ],
-        );
-
-        await connection.query(
-          `UPDATE inventories SET quantity = quantity - ? WHERE variant_id = ?`,
-          [item.qty, item.variant_id],
-        );
-      }
-
-      await connection.query(
-        `DELETE FROM cart_items WHERE id IN (${placeholders})`,
-        [...cartItemIds],
-      );
-
-      if (couponId && discountTotal > 0) {
-        await connection.query(
-          `INSERT INTO order_coupons (order_id, coupon_id, discount_applied) VALUES (?, ?, ?)`,
-          [orderId, couponId, discountTotal],
-        );
-      }
-
-      await connection.commit();
-      return orderId;
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally {
-      connection.release();
-    }
-  }
-  static async getOrderByIdAdmin(orderId) {
-    const sql = `
-    SELECT o.*,
-
-    oi.variant_id,
-    pv.product_id AS productId,   
-    oi.product_name_snapshot AS productName,
-    oi.unit_price_snapshot AS price,
-    oi.qty AS quantity,
-    oi.line_total,
-
-    (SELECT image_url 
-     FROM product_images 
-     WHERE product_id = pv.product_id 
-     ORDER BY is_primary DESC 
-     LIMIT 1) AS productImage,
-
-    IF(
-      (
-        SELECT COUNT(*) 
-        FROM reviews r 
-        WHERE r.user_id = o.user_id 
-          AND r.product_id = pv.product_id
-          AND r.order_id = o.id -- THÊM DÒNG NÀY
-      ) > 0,
-      1,
-      0
-    ) AS hasReviewed
-
-    FROM orders o
-    LEFT JOIN order_items oi ON o.id = oi.order_id
-    LEFT JOIN product_variants pv ON oi.variant_id = pv.id
-    WHERE o.id = ?
-  `;
-
-    const [rows] = await db.query(sql, [orderId]);
-
-    if (rows.length === 0) return null;
-
-    return {
-      ...rows[0],
-      items: rows
-        .filter((r) => r.variant_id)
-        .map((r) => ({
-          productId: r.productId,
-          variantId: r.variant_id,
-          productName: r.productName,
-          productImage: r.productImage,
-          quantity: r.quantity,
-          price: r.price,
-          line_total: r.line_total,
-          hasReviewed: !!r.hasReviewed,
-        })),
-    };
+  static async getOrderItemsByOrderId(connection, orderId) {
+    const [rows] = await connection.query(
+      `SELECT variant_id, qty FROM order_items WHERE order_id = ?`,
+      [orderId],
+    );
+    return rows;
   }
 
-  static async getOrdersByUserId(userId) {
-    const sql = `
-SELECT 
-  o.id AS orderId,
-  o.code,
-  o.total,
-  o.status,
-  o.created_at,
-
-  oi.variant_id,
-  pv.product_id AS productId,
-
-  oi.qty AS quantity,
-  oi.unit_price_snapshot AS price,
-  oi.product_name_snapshot AS productName,
-
-  (SELECT image_url 
-   FROM product_images 
-   WHERE product_id = pv.product_id 
-   ORDER BY is_primary DESC 
-   LIMIT 1) AS productImage,
-
-  IF(
-    EXISTS (
-      SELECT 1 
-      FROM reviews r 
-      WHERE r.user_id = o.user_id 
-        AND r.product_id = pv.product_id
-        AND r.order_id = o.id  -- THÊM DÒNG NÀY: Kiểm tra đúng đơn hàng đang xét
-    ),
-    1,
-    0
-  ) AS hasReviewed
-
-FROM orders o
-LEFT JOIN order_items oi ON o.id = oi.order_id
-LEFT JOIN product_variants pv ON oi.variant_id = pv.id
-
-WHERE o.user_id = ?
-ORDER BY o.created_at DESC
-`;
-    const [rows] = await db.query(sql, [userId]);
-
-    const ordersMap = {};
-    rows.forEach((row) => {
-      if (!ordersMap[row.orderId]) {
-        ordersMap[row.orderId] = {
-          id: row.orderId,
-          code: row.code,
-          total: row.total,
-          status: row.status,
-          created_at: row.created_at,
-          items: [],
-        };
-      }
-      if (row.variant_id) {
-        ordersMap[row.orderId].items.push({
-          productId: row.productId,
-          variantId: row.variant_id,
-          productName: row.productName,
-          productImage: row.productImage,
-          hasReviewed: !!row.hasReviewed,
-          quantity: row.quantity,
-          price: row.price,
-        });
-      }
-    });
-    return Object.values(ordersMap);
-  }
-
+  // CHUẨN HOÁ KIẾN TRÚC: Chỉ trả về mảng kết quả dữ liệu thô (raw data rows) từ database
   static async getOrderById(orderId, userId) {
-    const sql = `
-      SELECT  o.*,
+    const [rows] = await db.execute(
+      `
+    SELECT  
+      o.id,  
+      o.code,  
+      o.status,  
+      o.subtotal,  
+      o.discount_total,  
+      o.shipping_fee,  
+      o.total,  
+      o.receiver_name,  
+      o.receiver_phone,  
+      o.ship_line1,  
+      o.ship_ward,  
+      o.ship_district,  
+      o.ship_city,  
+      o.created_at,  
+      o.paid_at,  
 
-      oi.variant_id,
-      pv.product_id AS productId,   
-      oi.product_name_snapshot AS productName,
-      oi.unit_price_snapshot AS price,
-      oi.qty AS quantity,
-      oi.line_total,
+      oi.product_name_snapshot,  
+      oi.variant_snapshot,  
+      oi.unit_price_snapshot,  
+      oi.qty,
+      oi.line_total,  
+      p.image_url AS product_image_snapshot,
+      p.product_id AS productId,
 
-      (SELECT image_url 
-       FROM product_images 
-       WHERE product_id = pv.product_id 
-       ORDER BY is_primary DESC 
-       LIMIT 1) AS productImage,
-
-      -- THÊM CỤM NÀY ĐỂ CHECK HAS_REVIEWED CHO TRANG CHI TIẾT
-      IF(
-        EXISTS (
-          SELECT 1 
-          FROM reviews r 
-          WHERE r.user_id = o.user_id 
-            AND r.product_id = pv.product_id
-            AND r.order_id = o.id
-        ),
-        1,
-        0
-      ) AS hasReviewed
+      ${HAS_REVIEWED_SUBQUERY}
 
     FROM orders o
     LEFT JOIN order_items oi ON o.id = oi.order_id
     LEFT JOIN product_variants pv ON oi.variant_id = pv.id
+    LEFT JOIN product_images p 
+      ON pv.product_id = p.product_id AND p.is_primary = 1
     WHERE o.id = ? AND o.user_id = ?
-    `;
-    const [rows] = await db.query(sql, [orderId, userId]);
-    if (rows.length === 0) return null;
+    `,
+      [orderId, userId],
+    );
 
-    return {
-      ...rows[0],
-      items: rows
-        .filter((r) => r.variant_id)
-        .map((r) => ({
-          productId: r.productId,
-          variantId: r.variant_id,
-          productName: r.productName,
-          productImage: r.productImage,
-          quantity: r.quantity,
-          price: r.price,
-          line_total: r.line_total,
-          hasReviewed: !!r.hasReviewed,
-        })),
-    };
+    return rows;
   }
 
-  static async cancelOrder(orderId, userId) {
-    const connection = await db.getConnection();
-    await connection.beginTransaction();
+  static async cancelOrderWithConnection(connection, orderId, userId) {
+    const [result] = await connection.query(
+      `UPDATE orders
+       SET status = ?
+       WHERE id = ? AND user_id = ? AND status = ?`,
+      [ORDER_STATUS.CANCELLED, orderId, userId, ORDER_STATUS.PENDING],
+    );
+    return result.affectedRows;
+  }
 
-    try {
-      const [orders] = await connection.query(
-        `SELECT id 
-       FROM orders
-       WHERE id = ? 
-         AND user_id = ? 
-         AND status = 'Pending'`,
-        [orderId, userId],
-      );
-
-      if (orders.length === 0) {
-        throw new Error("Không thể hủy đơn hàng");
-      }
-
-      const [items] = await connection.query(
-        `SELECT variant_id, qty
-       FROM order_items
-       WHERE order_id = ?`,
-        [orderId],
-      );
-
-      await connection.query(
-        `UPDATE orders
-       SET status = 'Cancelled'
+  static async updateOrderStatusWithConnection(connection, orderId, status) {
+    const [result] = await connection.query(
+      `UPDATE orders
+       SET status = ?
        WHERE id = ?`,
-        [orderId],
-      );
-
-      for (const item of items) {
-        await connection.query(
-          `UPDATE inventories
-         SET quantity = quantity + ?
-         WHERE variant_id = ?`,
-          [item.qty, item.variant_id],
-        );
-      }
-      await connection.commit();
-
-      return true;
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally {
-      connection.release();
-    }
-  }
-  static async updateOrderStatus(orderId, newStatus) {
-    const connection = await db.getConnection();
-    await connection.beginTransaction();
-
-    try {
-      const [orders] = await connection.query(
-        `SELECT status FROM orders WHERE id = ?`,
-        [orderId],
-      );
-
-      if (orders.length === 0) {
-        throw new Error("Đơn hàng không tồn tại");
-      }
-
-      const currentStatus = orders[0].status;
-
-      const [result] = await connection.query(
-        `UPDATE orders SET status = ? WHERE id = ?`,
-        [newStatus, orderId],
-      );
-
-      if (
-        newStatus.toLowerCase() === "cancelled" &&
-        currentStatus.toLowerCase() !== "cancelled"
-      ) {
-        const [items] = await connection.query(
-          `SELECT variant_id, qty
-         FROM order_items
-         WHERE order_id = ?`,
-          [orderId],
-        );
-
-        for (const item of items) {
-          await connection.query(
-            `UPDATE inventories
-           SET quantity = quantity + ?
-           WHERE variant_id = ?`,
-            [item.qty, item.variant_id],
-          );
-        }
-      }
-
-      await connection.commit();
-
-      return result.affectedRows > 0;
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally {
-      connection.release();
-    }
+      [status, orderId],
+    );
+    return result.affectedRows;
   }
 }
 

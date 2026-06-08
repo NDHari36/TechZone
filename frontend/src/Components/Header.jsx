@@ -37,7 +37,7 @@ function Header() {
 
   const navigate = useNavigate();
   const location = useLocation();
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const checkLoginStatus = () => {
     const token = localStorage.getItem("authToken");
 
@@ -137,7 +137,7 @@ function Header() {
         }
 
         const res = await fetch(
-          `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=8&keyword=${encodeURIComponent(
+          `${API_BASE_URL}/products?page=0&size=8&keyword=${encodeURIComponent(
             searchValue,
           )}`,
           { headers },
@@ -200,15 +200,25 @@ function Header() {
     navigate(`/Category?keyword=${encodeURIComponent(product.name)}`);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.log("Logout API lỗi:", err);
+    }
+
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("userInfo");
 
     setIsLoggedIn(false);
     setUserInfo(null);
     setShowUserMenu(false);
 
-    navigate("/");
+    navigate("/signin");
   };
 
   return (

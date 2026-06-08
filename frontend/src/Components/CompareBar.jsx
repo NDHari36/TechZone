@@ -2,6 +2,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CompareContext } from "./CompareContext";
 import { X, Plus, Search as SearchIcon, Loader } from "lucide-react";
+import apiBrands from "../api/brandApi.js";
 
 export default function CompareBar() {
   const {
@@ -13,6 +14,7 @@ export default function CompareBar() {
     markAsCompared,
   } = useContext(CompareContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
@@ -22,14 +24,12 @@ export default function CompareBar() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const searchRef = useRef(null);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const res = await fetch(
-          "https://techzone-api-wkxx.onrender.com/api/brands",
-        );
-        const data = await res.json();
+        const data = await apiBrands.getAll();
         if (data.result) setBrands(data.result);
       } catch (err) {
         console.error("Lỗi lấy danh sách hãng:", err);
@@ -63,7 +63,7 @@ export default function CompareBar() {
             if (token) headers.Authorization = `Bearer ${token}`;
 
             const res = await fetch(
-              `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=20&keyword=${encodeURIComponent(
+              `${API_BASE_URL}/products?page=0&size=20&keyword=${encodeURIComponent(
                 fallbackKeyword,
               )}`,
               { headers },
@@ -92,7 +92,7 @@ export default function CompareBar() {
         if (token) headers.Authorization = `Bearer ${token}`;
 
         const res = await fetch(
-          `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=20&keyword=${encodeURIComponent(keyword)}`,
+          `${API_BASE_UR}${import.meta.env.VITE_API_PRODUCTS}/page=0&size=20&keyword=${encodeURIComponent(keyword)}`,
           { headers },
         );
         const data = await res.json();
@@ -308,7 +308,7 @@ export default function CompareBar() {
                 <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2">
                   {brands.map((brand) => (
                     <button
-                      key={brand.id}
+                      key={brand.name}
                       type="button"
                       onClick={() => {
                         setKeyword(brand.name);

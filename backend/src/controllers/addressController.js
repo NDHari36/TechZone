@@ -1,11 +1,11 @@
-const Address = require("../models/addressModel");
-const db = require("../config/db");
+const AddressService = require("../services/addressService");
 
 class AddressController {
   static async getMyAddresses(req, res) {
     try {
       const userId = req.user.id;
-      const addresses = await Address.getAddressesByUserId(userId);
+
+      const addresses = await AddressService.getAddressesByUserId(userId);
 
       res.status(200).json({
         success: true,
@@ -13,7 +13,10 @@ class AddressController {
       });
     } catch (error) {
       console.error("Lỗi getMyAddresses:", error.message);
-      res.status(500).json({ message: "Lỗi server khi lấy địa chỉ" });
+
+      res.status(500).json({
+        message: "Lỗi server khi lấy địa chỉ",
+      });
     }
   }
 
@@ -22,32 +25,38 @@ class AddressController {
       const userId = req.user.id;
       const addressData = req.body;
 
-      const addressId = await Address.addAddress(userId, addressData);
+      const addressId = await AddressService.addAddress(userId, addressData);
 
       res.status(201).json({
         success: true,
         message: "Thêm địa chỉ mới thành công",
-        result: { id: addressId, ...addressData },
+        result: {
+          id: addressId,
+          ...addressData,
+        },
       });
     } catch (error) {
       console.error("LỖI SQL CHI TIẾT:", error.message);
+
       res.status(500).json({
         message: "Lỗi hệ thống khi lưu địa chỉ: " + error.message,
       });
     }
   }
+
   static async getAddressesByUserId(req, res) {
     try {
       const userId = req.params.userId;
 
-      const addresses = await Address.getAddressesByUserId(userId);
+      const addresses = await AddressService.getAddressesByUserId(userId);
 
       res.status(200).json({
         success: true,
         result: addresses,
       });
-    } catch (err) {
-      console.error("Lỗi lấy địa chỉ:", err);
+    } catch (error) {
+      console.error("Lỗi lấy địa chỉ:", error);
+
       res.status(500).json({
         success: false,
         message: "Lỗi server",
@@ -60,7 +69,7 @@ class AddressController {
       const userId = req.user.id;
       const addressId = req.params.id;
 
-      const success = await Address.updateDefault(userId, addressId);
+      const success = await AddressService.updateDefault(userId, addressId);
 
       if (!success) {
         return res.status(404).json({
@@ -74,7 +83,10 @@ class AddressController {
       });
     } catch (error) {
       console.error("Lỗi setDefaultAddress:", error.message);
-      res.status(500).json({ message: "Lỗi hệ thống khi đặt mặc định" });
+
+      res.status(500).json({
+        message: "Lỗi hệ thống khi đặt mặc định",
+      });
     }
   }
 
@@ -83,12 +95,12 @@ class AddressController {
       const userId = req.user.id;
       const addressId = req.params.id;
 
-      const success = await Address.deleteAddress(userId, addressId);
+      const success = await AddressService.deleteAddress(userId, addressId);
 
       if (!success) {
-        return res
-          .status(404)
-          .json({ message: "Không tìm thấy địa chỉ để xóa!" });
+        return res.status(404).json({
+          message: "Không tìm thấy địa chỉ để xóa!",
+        });
       }
 
       res.status(200).json({
@@ -97,7 +109,10 @@ class AddressController {
       });
     } catch (error) {
       console.error("Lỗi deleteAddress:", error.message);
-      res.status(500).json({ message: "Lỗi server khi xóa địa chỉ" });
+
+      res.status(500).json({
+        message: "Lỗi server khi xóa địa chỉ",
+      });
     }
   }
 }

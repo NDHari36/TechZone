@@ -4,8 +4,10 @@ const cors = require("cors");
 const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
+const cookieParser = require("cookie-parser");
 
 const app = express();
+app.use(cookieParser());
 const server = http.createServer(app);
 
 const io = new Server(server, {

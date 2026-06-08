@@ -3,8 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 
-const API_URL =
-  "https://techzone-api-wkxx.onrender.com/api/auth/reset-password-default";
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth/reset-password-default`;
 
 export default function ResetPass() {
   const [startId, setStartId] = useState("");

@@ -60,7 +60,7 @@ function SignUp() {
         state: { message: "Đăng ký thành công! Vui lòng đăng nhập." },
       });
     } catch (err) {
-      setError(err?.response?.data?.message || "Đăng ký thất bại");
+      setError(err.message);
     } finally {
       setLoading(false);
     }

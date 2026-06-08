@@ -8,6 +8,7 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,20 +16,17 @@ function SignIn() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        "https://techzone-api-wkxx.onrender.com/auth/access-token",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            username: username,
-            password: password,
-          }),
+      const response = await fetch(`${API_BASE_URL}/auth/access-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        credentials: "include",
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Tên đăng nhập hoặc mật khẩu không chính xác");

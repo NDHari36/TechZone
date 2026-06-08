@@ -39,7 +39,7 @@ function OrderDetail() {
           }),
         );
       }
-
+      console.log("Chi tiết đơn hàng đã tải:", rawOrder);
       setOrder(rawOrder);
     } catch (err) {
       setError(
@@ -183,11 +183,11 @@ function OrderDetail() {
                 className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100"
               >
                 <div className="w-20 h-20 bg-white border border-gray-200 rounded-xl flex items-center justify-center overflow-hidden p-2">
-                  {it.productImage || it.image_url ? (
+                  {it.productImage || it.image_url || it.image ? (
                     <img
-                      src={it.productImage || it.image_url}
+                      src={it.productImage || it.image_url || it.image}
                       className="w-full h-full object-contain"
-                      alt=""
+                      alt={it.productName}
                     />
                   ) : (
                     <Package size={24} className="text-gray-400" />

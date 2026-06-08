@@ -48,7 +48,6 @@ function Orders() {
         formatted.sort(
           (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0),
         );
-
         setOrders(formatted);
       } catch (err) {
         console.error(err);

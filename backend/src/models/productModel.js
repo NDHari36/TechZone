@@ -309,7 +309,7 @@ class Product {
             JOIN product_variants pv ON oi.variant_id = pv.id 
             WHERE pv.product_id = p.id
         ), 0) AS sold_count,
-        (SELECT image_url FROM product_images WHERE product_id = p.id ) AS image
+        (SELECT image_url FROM product_images WHERE product_id = p.id and is_primary = 1 ) AS image
       FROM products p
       WHERE p.is_active = 1
       ORDER BY sold_count DESC
@@ -338,13 +338,32 @@ class Product {
     return rows;
   }
 
-  static async checkUserCanReview(userId, orderId, productId) {
+  static async findValidReviewOrder(userId, orderId, productId) {
     if (orderId && orderId !== 0 && orderId !== "null") {
       const sql = `
-        SELECT 
-          EXISTS(SELECT 1 FROM orders o JOIN order_items oi ON o.id = oi.order_id JOIN product_variants pv ON oi.variant_id = pv.id WHERE o.id = ? AND o.user_id = ? AND pv.product_id = ? AND LOWER(TRIM(o.status)) = 'completed') AS has_order,
-          EXISTS(SELECT 1 FROM reviews WHERE user_id = ? AND order_id = ? AND product_id = ?) AS has_review
-      `;
+      SELECT
+        EXISTS(
+          SELECT 1
+          FROM orders o
+          JOIN order_items oi
+            ON o.id = oi.order_id
+          JOIN product_variants pv
+            ON oi.variant_id = pv.id
+          WHERE o.id = ?
+            AND o.user_id = ?
+            AND pv.product_id = ?
+            AND LOWER(TRIM(o.status)) = 'completed'
+        ) AS has_order,
+
+        EXISTS(
+          SELECT 1
+          FROM reviews
+          WHERE user_id = ?
+            AND order_id = ?
+            AND product_id = ?
+        ) AS has_review
+    `;
+
       const [rows] = await db.query(sql, [
         orderId,
         userId,
@@ -353,29 +372,48 @@ class Product {
         orderId,
         productId,
       ]);
+
       return rows[0].has_order === 1 && rows[0].has_review === 0
         ? orderId
         : null;
-    } else {
-      const sql = `
-        SELECT o.id AS order_id FROM orders o
-        JOIN order_items oi ON o.id = oi.order_id
-        JOIN product_variants pv ON oi.variant_id = pv.id
-        WHERE o.user_id = ? AND pv.product_id = ? AND LOWER(TRIM(o.status)) = 'completed'
-        AND NOT EXISTS (SELECT 1 FROM reviews r WHERE r.user_id = o.user_id AND r.order_id = o.id AND r.product_id = pv.product_id)
-        LIMIT 1
-      `;
-      const [rows] = await db.query(sql, [userId, productId]);
-      return rows.length > 0 ? rows[0].order_id : null;
-    }
-  }
-  static async createReview(userId, orderId, productId, rating, comment) {
-    if (rating < 1 || rating > 5) {
-      throw new Error("Rating must be between 1 and 5");
     }
 
-    const insertSql =
-      "INSERT INTO reviews (product_id, order_id, user_id, rating, comment) VALUES (?, ?, ?, ?, ?)";
+    const sql = `
+    SELECT o.id AS order_id
+    FROM orders o
+    JOIN order_items oi
+      ON o.id = oi.order_id
+    JOIN product_variants pv
+      ON oi.variant_id = pv.id
+    WHERE o.user_id = ?
+      AND pv.product_id = ?
+      AND LOWER(TRIM(o.status)) = 'completed'
+      AND NOT EXISTS (
+        SELECT 1
+        FROM reviews r
+        WHERE r.user_id = o.user_id
+          AND r.order_id = o.id
+          AND r.product_id = pv.product_id
+      )
+    LIMIT 1
+  `;
+
+    const [rows] = await db.query(sql, [userId, productId]);
+
+    return rows.length ? rows[0].order_id : null;
+  }
+  static async insertReview(userId, orderId, productId, rating, comment) {
+    const insertSql = `
+    INSERT INTO reviews
+    (
+      product_id,
+      order_id,
+      user_id,
+      rating,
+      comment
+    )
+    VALUES (?, ?, ?, ?, ?)
+  `;
 
     const [result] = await db.query(insertSql, [
       productId,
@@ -385,14 +423,34 @@ class Product {
       comment,
     ]);
 
-    const getSql =
-      "SELECT r.*, u.username AS display_name FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.id = ?";
+    const getSql = `
+    SELECT
+      r.*,
+      u.username AS display_name
+    FROM reviews r
+    JOIN users u
+      ON r.user_id = u.id
+    WHERE r.id = ?
+  `;
 
     const [rows] = await db.query(getSql, [result.insertId]);
+
     return rows[0];
   }
+  static async getById(userId) {
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM users
+      WHERE id = ?
+      LIMIT 1
+      `,
+      [userId],
+    );
 
-  static async addImage(productId, imageUrl, isPrimary = 0, sortOrder = 0) {
+    return rows[0];
+  }
+  static async addImage(productId, imageUrl, isPrimary = 1, sortOrder = 0) {
     const sql = `INSERT INTO product_images (product_id, image_url, is_primary, sort_order) VALUES (?, ?, ?, ?)`;
     const [result] = await db.query(sql, [
       productId,

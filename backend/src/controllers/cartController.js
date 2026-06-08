@@ -1,10 +1,10 @@
-const Cart = require("../models/cartModel");
+const CartService = require("../services/cartService");
 
 class CartController {
   static async getMyCart(req, res) {
     try {
       const userId = req.user.id;
-      const cart = await Cart.getCart(userId);
+      const cart = await CartService.getCart(userId);
       res.json({ result: cart });
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -20,7 +20,7 @@ class CartController {
         return res.status(400).json({ message: "Thiếu thông tin sản phẩm" });
       }
 
-      const updatedCart = await Cart.addItem(
+      const updatedCart = await CartService.addItem(
         userId,
         productId,
         variantId,
@@ -39,7 +39,11 @@ class CartController {
       const userId = req.user.id;
       const { variantId, quantity } = req.body;
 
-      const updatedCart = await Cart.updateItemQty(userId, variantId, quantity);
+      const updatedCart = await CartService.updateItemQty(
+        userId,
+        variantId,
+        quantity,
+      );
       res.json({ message: "Đã cập nhật số lượng", result: updatedCart });
     } catch (error) {
       res.status(400).json({ message: error.message });
@@ -51,7 +55,7 @@ class CartController {
       const userId = req.user.id;
       const { variantId } = req.params;
 
-      const updatedCart = await Cart.removeItem(userId, variantId);
+      const updatedCart = await CartService.removeItem(userId, variantId);
       res.json({ message: "Đã xóa sản phẩm khỏi giỏ", result: updatedCart });
     } catch (error) {
       res.status(500).json({ message: error.message });

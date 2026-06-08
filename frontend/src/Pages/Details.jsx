@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import {
   ShoppingCart,
@@ -74,6 +74,7 @@ const SPEC_ITEM_ORDER = [
 
 function Details() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
@@ -92,7 +93,8 @@ function Details() {
   });
   const searchParams = new URLSearchParams(window.location.search);
   const currentOrderId = searchParams.get("orderId");
-  const { addToCompare, compareList, setShowBar } = useContext(CompareContext);
+  const { addToCompare, removeFromCompare, compareList, setShowBar } =
+    useContext(CompareContext);
   const isComparing = compareList.find((item) => item.id === product?.id);
 
   const toggleGroup = (groupName) => {
@@ -101,6 +103,7 @@ function Details() {
       [groupName]: !prev[groupName],
     }));
   };
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     setShowBar(false);
@@ -196,17 +199,14 @@ function Details() {
         quantity: Number(quantity),
       };
 
-      const res = await fetch(
-        `https://techzone-api-wkxx.onrender.com/api/cart/${selectedVariant.id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify(body),
+      const res = await fetch(`${API_BASE_URL}/cart/${selectedVariant.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      );
+        body: JSON.stringify(body),
+      });
 
       if (!res.ok) throw new Error("Thêm vào giỏ hàng thất bại");
 
@@ -420,28 +420,48 @@ function Details() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mb-8 flex justify-between items-center text-sm text-gray-600">
           <div>
-            <span className="hover:text-gray-900 cursor-pointer">
+            <span
+              onClick={() => navigate("/")}
+              className="hover:text-gray-900 cursor-pointer"
+            >
               Trang chủ
             </span>
             <span className="mx-2">/</span>
-            <span className="hover:text-gray-900 cursor-pointer">
+            <span
+              onClick={() =>
+                navigate(
+                  `/store?keyword=${encodeURIComponent(product.category_name)}`,
+                )
+              }
+              className="hover:text-gray-900 cursor-pointer"
+            >
               {product.category_name || ""}
             </span>
             <span className="mx-2">/</span>
-            <span className="text-gray-900 font-medium">{product.name}</span>
+            <span
+              onClick={() => navigate(`/product/detail/${product.id}`)}
+              className="text-gray-900 font-medium hover:text-gray-700 cursor-pointer"
+            >
+              {product.name}
+            </span>
           </div>
 
           <button
-            onClick={() => addToCompare(product)}
-            disabled={isComparing}
+            onClick={() => {
+              if (isComparing) {
+                removeFromCompare(product.id);
+              } else {
+                addToCompare(product);
+              }
+            }}
             className={`flex items-center gap-1 px-3 py-1.5 rounded border transition-colors ${
               isComparing
-                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                ? "bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                 : "bg-white text-blue-600 border-blue-600 hover:bg-blue-50"
             }`}
           >
             <Plus size={16} />
-            {isComparing ? "Đã thêm so sánh" : "So sánh"}
+            {isComparing ? "Bỏ so sánh" : "So sánh"}
           </button>
         </div>
 

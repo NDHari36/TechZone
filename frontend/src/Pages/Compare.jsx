@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { CompareContext } from "../Components/CompareContext";
 import productApi from "../api/productApi";
+import apiBrands from "../api/brandApi";
+
 import {
   Loader,
   X,
@@ -47,7 +49,7 @@ function Compare() {
       [groupName]: !prev[groupName],
     }));
   };
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchCompareData = async () => {
       setLoading(true);
@@ -76,13 +78,9 @@ function Compare() {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const res = await fetch(
-          "https://techzone-api-wkxx.onrender.com/api/brands",
-        );
+        const data = await apiBrands.getAll();
 
-        const data = await res.json();
-
-        if (data.result) {
+        if (data && data.result) {
           setBrands(data.result);
         }
       } catch (err) {
@@ -105,7 +103,6 @@ function Compare() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // FIX: load sản phẩm mặc định khi chưa search
   useEffect(() => {
     const fetchSearch = async () => {
       setIsSearching(true);
@@ -122,10 +119,8 @@ function Compare() {
         }
 
         const url = keyword.trim()
-          ? `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=20&keyword=${encodeURIComponent(
-              keyword,
-            )}`
-          : `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=20`;
+          ? `${API_BASE_URL}/products?page=0&size=20&keyword=${encodeURIComponent(keyword)}`
+          : `${API_BASE_URL}/products?page=0&size=20`;
 
         const res = await fetch(url, { headers });
 
@@ -426,7 +421,10 @@ function Compare() {
                     <X size={18} />
                   </button>
 
-                  <div className="w-40 h-40 mb-4 flex items-center justify-center">
+                  <div
+                    onClick={() => navigate(`/product/detail/${prod.id}`)}
+                    className="w-40 h-40 mb-4 flex items-center justify-center cursor-pointer"
+                  >
                     <img
                       src={
                         prod.images?.[0]?.image_url ||
@@ -475,6 +473,90 @@ function Compare() {
                 </div>
               ))}
             </div>
+
+            {/* SO SÁNH NHANH */}
+            <div className="flex flex-col">
+              <button
+                onClick={() => toggleGroup("SO SÁNH NHANH")}
+                className="w-full bg-slate-100 flex items-center justify-between px-4 py-3 border-r border-b border-gray-200 font-bold text-gray-700 text-sm uppercase tracking-wider hover:bg-slate-200 transition-colors"
+              >
+                <span>SO SÁNH NHANH</span>
+                {openGroups["SO SÁNH NHANH"] ? (
+                  <ChevronUp size={16} />
+                ) : (
+                  <ChevronDown size={16} />
+                )}
+              </button>
+
+              {openGroups["SO SÁNH NHANH"] && (
+                <div className="flex bg-white">
+                  <div className="w-[250px] flex-shrink-0 border-r border-b border-gray-200 p-4 font-semibold text-gray-600 text-sm bg-gray-50 flex items-center">
+                    Tóm tắt thông số
+                  </div>
+                  {productsData.map((prod) => (
+                    <div
+                      key={prod.id}
+                      className="flex-1 min-w-[250px] border-r border-b border-gray-200 p-4 bg-white text-sm"
+                    >
+                      <ul className="list-disc pl-5 space-y-1 text-gray-700 font-medium">
+                        {getQuickCompareData(prod).map((bullet, idx) => (
+                          <li key={idx}>{bullet}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  {[...Array(3 - productsData.length)].map((_, idx) => (
+                    <div
+                      key={idx}
+                      className="flex-1 min-w-[250px] border-r border-b border-gray-200 bg-gray-50"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* CHI TIẾT CÁC NHÓM THÔNG SỐ */}
+            {Object.keys(sortedGlobalGroups).map((groupName) => (
+              <div key={groupName} className="flex flex-col">
+                <button
+                  onClick={() => toggleGroup(groupName)}
+                  className="w-full bg-slate-100 flex items-center justify-between px-4 py-3 border-r border-b border-gray-200 font-bold text-gray-700 text-sm uppercase tracking-wider hover:bg-slate-200 transition-colors"
+                >
+                  <span>{groupName}</span>
+                  {openGroups[groupName] ? (
+                    <ChevronUp size={16} />
+                  ) : (
+                    <ChevronDown size={16} />
+                  )}
+                </button>
+
+                {openGroups[groupName] &&
+                  sortedGlobalGroups[groupName].map((specName) => (
+                    <div
+                      key={specName}
+                      className="flex bg-white hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="w-[250px] flex-shrink-0 border-r border-b border-gray-200 p-4 font-semibold text-gray-600 text-sm bg-gray-50 flex items-center">
+                        {specName}
+                      </div>
+                      {productsData.map((prod) => (
+                        <div
+                          key={prod.id}
+                          className="flex-1 min-w-[250px] border-r border-b border-gray-200 p-4 bg-white text-sm text-gray-700 flex items-center font-medium"
+                        >
+                          {getSpecValue(prod, groupName, specName)}
+                        </div>
+                      ))}
+                      {[...Array(3 - productsData.length)].map((_, idx) => (
+                        <div
+                          key={idx}
+                          className="flex-1 min-w-[250px] border-r border-b border-gray-200 bg-gray-50"
+                        />
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            ))}
           </div>
         )}
       </main>
@@ -579,7 +661,7 @@ function Compare() {
 
                   {brands.map((brand) => (
                     <button
-                      key={brand.id}
+                      key={brand}
                       type="button"
                       onClick={() => {
                         setKeyword(brand.name);

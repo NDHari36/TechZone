@@ -32,7 +32,7 @@ function SignIn() {
     try {
       const result = await authApi.login(formData);
 
-      const token = result?.token;
+      const token = result?.accessToken;
       const user = result?.user;
 
       if (!token) throw new Error("Không tìm thấy token");

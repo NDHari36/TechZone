@@ -136,7 +136,6 @@ const OrderManager = () => {
     try {
       const res = await orderApi.getByIdAdmin(order.id);
       const details = res.result || res.data || {};
-      console.log(details);
       if (details && Array.isArray(details.items)) {
         details.items = details.items
           .filter((i) => i)

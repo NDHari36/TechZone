@@ -1,11 +1,10 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://techzone-api-wkxx.onrender.com/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,33 +19,39 @@ api.interceptors.request.use((config) => {
 });
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response) {
-      const status = error.response.status;
-      const errorData = error.response.data;
+  (response) => response,
 
-      if (status === 401 || status === 403) {
-        if (errorData?.error === "ACCOUNT_LOCKED") {
-          alert(
-            "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ bộ phận hỗ trợ!",
-          );
-        }
+  async (error) => {
+    const originalRequest = error.config;
 
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const res = await axios.post(
+          `${API_BASE_URL}/auth/refresh-token`,
+          {},
+          { withCredentials: true },
+        );
+
+        const newToken = res.data.accessToken;
+
+        localStorage.setItem("authToken", newToken);
+
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+        return api(originalRequest);
+      } catch (err) {
         localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
+        localStorage.removeItem("userInfo");
 
-        window.dispatchEvent(new Event("storage"));
+        window.location.href = "/signin";
 
-        if (window.location.pathname !== "/signin") {
-          window.location.href = "/signin";
-        }
+        return Promise.reject(err);
       }
     }
+
     return Promise.reject(error);
   },
 );
-
 export default api;

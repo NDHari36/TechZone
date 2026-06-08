@@ -7,6 +7,7 @@ import { ShieldCheck, Truck, Headset, ArrowRight } from "lucide-react";
 export default function HomePage() {
   const [tiles, setTiles] = useState([]);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -16,10 +17,9 @@ export default function HomePage() {
         const headers = { "Content-Type": "application/json" };
         if (token) headers.Authorization = `Bearer ${token}`;
 
-        const res = await fetch(
-          "https://techzone-api-wkxx.onrender.com/api/products?page=0&size=100",
-          { headers },
-        );
+        const res = await fetch(`${API_BASE_URL}/products?page=0&size=100`, {
+          headers,
+        });
         const data = await res.json();
         const all = data.result?.content || data.result || [];
 

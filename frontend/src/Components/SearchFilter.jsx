@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Loader } from "lucide-react";
+import apiBrands from "../api/brandApi.js";
 
 export default function SearchFilter({ defaultKeyword = "", onSearch }) {
   const [keyword, setKeyword] = useState(defaultKeyword);
@@ -15,11 +16,7 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
-        const res = await fetch(
-          "https://techzone-api-wkxx.onrender.com/api/brands",
-        );
-
-        const data = await res.json();
+        const data = await apiBrands.getAll();
 
         if (data.result) setBrands(data.result);
       } catch (err) {
@@ -67,7 +64,7 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
         }
 
         const res = await fetch(
-          `https://techzone-api-wkxx.onrender.com/api/products?page=0&size=8&keyword=${encodeURIComponent(keyword)}`,
+          `${API_BASE_URL}/products?page=0&size=8&keyword=${encodeURIComponent(keyword)}`,
           { headers },
         );
 
@@ -100,7 +97,6 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
 
     setShowDropdown(false);
   };
-
   const handleSelectProduct = (product) => {
     setKeyword(product.name);
 
@@ -193,7 +189,7 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
       <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2">
         {brands.map((brand) => (
           <button
-            key={brand.id}
+            key={brand}
             type="button"
             onClick={() => {
               setKeyword(brand.name);

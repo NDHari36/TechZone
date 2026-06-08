@@ -26,6 +26,7 @@ export async function register(payload) {
 
     return response.data;
   } catch (error) {
+    console.log(error.response.data);
     const message = error.response?.data?.message || "Đăng ký thất bại";
     throw new Error(message);
   }
@@ -49,9 +50,19 @@ export async function resetPasswordRange(start = 1, end = 100) {
   return true;
 }
 
+export const logout = async () => {
+  await api.post("/auth/logout");
+
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userInfo");
+
+  window.location.href = "/signin";
+};
+
 export default {
   login,
   register,
   resetPassword,
   resetPasswordRange,
+  logout,
 };
