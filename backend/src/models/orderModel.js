@@ -1,6 +1,5 @@
 const db = require("../config/db");
 
-// Constants
 const ORDER_STATUS = {
   PENDING: "pending",
   PAID: "paid",
@@ -13,7 +12,6 @@ const ORDER_CONFIG = {
   DEFAULT_SHIPPING_FEE: 0,
 };
 
-// Reusable SQL Fragment
 const HAS_REVIEWED_SUBQUERY = `
   IF(
     EXISTS(
@@ -39,7 +37,6 @@ class Order {
     return await db.getConnection();
   }
 
-  // Transaction Helper Wrapper
   static async withTransaction(callback) {
     const connection = await db.getConnection();
     try {
@@ -72,11 +69,9 @@ class Order {
     return rows[0];
   }
 
-  // Khóa dòng inventories theo ID tăng dần để ngăn chặn triệt để Deadlock và tránh khóa lan truyền sang các bảng tĩnh
   static async lockInventories(connection, variantIds) {
     if (!variantIds || variantIds.length === 0) return [];
 
-    // Loại bỏ các ID trùng lặp và sắp xếp tăng dần để duy trì Lock Ordering nhất quán
     const sortedUniqueIds = [...new Set(variantIds)].sort((a, b) => a - b);
     const placeholders = sortedUniqueIds.map(() => "?").join(",");
 
@@ -89,7 +84,6 @@ class Order {
     return rows;
   }
 
-  // Đọc giỏ hàng thuần không khóa bảng tĩnh
   static async getCartItems(connection, cartItemIds) {
     const placeholders = cartItemIds.map(() => "?").join(",");
 
@@ -188,7 +182,6 @@ class Order {
     );
   }
 
-  // CHUẨN HOÁ PHÂN TẦNG: Chỉ trả về affectedRows cho Service quyết định ném lỗi, không tự ý quăng lỗi nghiệp vụ ở Model
   static async updateInventory(connection, variantId, qty) {
     const [result] = await connection.query(
       `UPDATE inventories
@@ -199,7 +192,6 @@ class Order {
     return result.affectedRows;
   }
 
-  // Tăng tồn kho khi đơn hàng bị hủy
   static async incrementInventory(connection, variantId, qty) {
     await connection.query(
       `UPDATE inventories
@@ -228,7 +220,6 @@ class Order {
     );
   }
 
-  // CHUẨN HOÁ KIẾN TRÚC: Chỉ trả về mảng kết quả dữ liệu thô (raw data rows) từ database
   static async getOrderByIdAdmin(orderId) {
     const [rows] = await db.execute(
       ` SELECT o.*,
@@ -328,7 +319,6 @@ class Order {
     return rows;
   }
 
-  // CHUẨN HOÁ KIẾN TRÚC: Chỉ trả về mảng kết quả dữ liệu thô (raw data rows) từ database
   static async getOrderById(orderId, userId) {
     const [rows] = await db.execute(
       `

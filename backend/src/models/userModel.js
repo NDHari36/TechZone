@@ -1,7 +1,6 @@
 const db = require("../config/db");
 
 class User {
-  // CREATE USER
   static async createUser(connection, data) {
     const { username, email, password_hash, full_name, phone } = data;
 

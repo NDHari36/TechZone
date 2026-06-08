@@ -1,7 +1,6 @@
 const { z } = require("zod");
 const OrderService = require("../services/orderService");
 
-// Schemas Validation đầu vào
 const CreateOrderSchema = z.object({
   addressId: z.coerce
     .number({ required_error: "Địa chỉ là bắt buộc" })
@@ -27,7 +26,6 @@ const UpdateOrderStatusSchema = z.object({
 class OrderController {
   static async createOrder(req, res) {
     try {
-      // Validate Validation Boundary đầu vào
       const validatedData = CreateOrderSchema.parse(req.body);
 
       const orderId = await OrderService.createOrder(
@@ -55,7 +53,6 @@ class OrderController {
 
   static async getOrderDetailForAdmin(req, res) {
     try {
-      // Validate URL params
       const { id } = OrderIdParamSchema.parse(req.params);
 
       const order = await OrderService.getOrderDetailForAdmin(id);
@@ -117,7 +114,6 @@ class OrderController {
 
   static async getOrderDetail(req, res) {
     try {
-      // Validate URL params
       const { id } = OrderIdParamSchema.parse(req.params);
 
       if (!req.user || !req.user.id) {
@@ -146,7 +142,6 @@ class OrderController {
 
   static async cancelOrder(req, res) {
     try {
-      // Validate URL params
       const { id } = OrderIdParamSchema.parse(req.params);
 
       if (!req.user || !req.user.id) {
@@ -174,7 +169,6 @@ class OrderController {
 
   static async updateOrderStatus(req, res) {
     try {
-      // Validate URL params & Body status
       const { id } = OrderIdParamSchema.parse(req.params);
       const { status } = UpdateOrderStatusSchema.parse(req.body);
 
