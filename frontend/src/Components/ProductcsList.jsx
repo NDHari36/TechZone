@@ -77,8 +77,22 @@ function ProductsList({ searchParams }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px] bg-[#121212]">
-        <Loader className="h-10 w-10 animate-spin text-white" />
+      <div className="max-w-7xl mx-auto px-6 py-20 space-y-10">
+        <div className="h-10 w-1/3 bg-slate-200 animate-pulse rounded-xl mx-auto" />
+
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="grid grid-cols-4 gap-4">
+            <div className="h-[400px] bg-slate-100 rounded-2xl animate-pulse" />
+            <div className="col-span-3 grid grid-cols-3 gap-4">
+              {[1, 2, 3].map((j) => (
+                <div
+                  key={j}
+                  className="h-[400px] bg-slate-100 rounded-2xl animate-pulse"
+                />
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -87,19 +101,18 @@ function ProductsList({ searchParams }) {
     return <div className="text-red-500 text-center py-10">{error}</div>;
 
   return (
-    <section className="bg-[#121212] min-h-screen pt-16 pb-20 font-sans text-white">
+    <section className="bg-white pt-16 pb-20 font-sans text-slate-900">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-16 text-center">
-          <h2 className="font-Roboto text-4xl font-bold mx-auto max-w-4xl text-white">
-            <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent">
-              Không gian thương hiệu
+          <h2 className="text-4xl font-bold text-center mb-4">
+            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-orange-600 bg-clip-text text-transparent">
+              Không gian thương hiệu - Khám phá hệ sinh thái
             </span>
-            . Khám phá hệ sinh thái.
           </h2>
         </div>
 
         <div className="space-y-20">
-          {NAV_LIST.map((nav) => {
+          {NAV_LIST.map((nav, index) => {
             const items = productsGrouped[nav.id] || [];
             if (items.length === 0) return null;
 
@@ -107,34 +120,32 @@ function ProductsList({ searchParams }) {
               <div key={nav.id} id={nav.id} className="scroll-mt-24">
                 <div className="flex justify-between items-end mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold uppercase tracking-wide text-white">
+                    <h2 className="text-2xl font-bold uppercase tracking-wide text-slate-900">
                       {nav.title}
                     </h2>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-                  <div className="lg:col-span-1 bg-[#0b132b] rounded-2xl p-6 flex flex-col justify-between shadow-lg h-[400px] relative overflow-hidden group">
+                  <div className="lg:col-span-1 bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50 rounded-2xl p-6 flex flex-col justify-between shadow-lg border border-slate-100 h-[400px] relative overflow-hidden group">
                     <div className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none">
                       <img
-                        src={`/images/brands/${nav.id}.jpg`}
-                        alt={nav.label}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.style.display = "none";
+                          e.target.style.opacity = 0.5;
                         }}
                       />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b132b] via-[#0b132b]/80 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
 
                     <div className="relative z-10 flex-1 pt-4">
-                      <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">
+                      <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
                         Thương hiệu
                       </span>
-                      <h3 className="text-4xl font-black text-white mt-2 mb-4">
+                      <h3 className="text-4xl font-black text-slate-900 mt-2 mb-4">
                         {nav.label}
                       </h3>
-                      <p className="text-sm text-gray-400 leading-relaxed">
+                      <p className="text-slate-600 leading-relaxed">
                         Khám phá hệ sinh thái và các sản phẩm công nghệ đột phá
                         từ dòng {nav.label}.
                       </p>
@@ -143,7 +154,7 @@ function ProductsList({ searchParams }) {
                     <div className="relative z-10">
                       <Link
                         to={`/Category?keyword=${nav.id}`}
-                        className="block w-full text-center bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white text-sm font-bold py-3 rounded-xl transition-colors"
+                        className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-3 rounded-xl transition-colors shadow-md shadow-blue-200"
                       >
                         Xem tất cả {items.length} sản phẩm
                       </Link>
@@ -157,6 +168,15 @@ function ProductsList({ searchParams }) {
                     />
                   </div>
                 </div>
+                {index !== NAV_LIST.length - 1 && (
+                  <div className="my-16 flex items-center justify-center">
+                    <div className="w-full max-w-6xl border-t border-slate-200 relative">
+                      <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-white px-4 text-xs text-slate-400 tracking-widest">
+                        ●
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}

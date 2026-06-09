@@ -4,26 +4,23 @@ import apiBrands from "../api/brandApi.js";
 
 export default function SearchFilter({ defaultKeyword = "", onSearch }) {
   const [keyword, setKeyword] = useState(defaultKeyword);
-
   const [brands, setBrands] = useState([]);
-
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const searchRef = useRef(null);
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchBrands = async () => {
       try {
         const data = await apiBrands.getAll();
-
         if (data.result) setBrands(data.result);
       } catch (err) {
         console.error("Lỗi lấy danh sách hãng:", err);
       }
     };
-
     fetchBrands();
   }, []);
 
@@ -33,9 +30,7 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
         setShowDropdown(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -54,11 +49,9 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
 
       try {
         const token = localStorage.getItem("authToken");
-
         const headers = {
           "Content-Type": "application/json",
         };
-
         if (token) {
           headers.Authorization = `Bearer ${token}`;
         }
@@ -67,12 +60,9 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
           `${API_BASE_URL}/products?page=0&size=8&keyword=${encodeURIComponent(keyword)}`,
           { headers },
         );
-
         const data = await res.json();
-
         const products =
           data.result?.content || data.result?.data || data.result || [];
-
         setSearchResults(Array.isArray(products) ? products : []);
       } catch (error) {
         console.error("Lỗi tìm kiếm:", error);
@@ -82,30 +72,26 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
     };
 
     const timer = setTimeout(fetchSearch, 300);
-
     return () => clearTimeout(timer);
   }, [keyword]);
 
   const submit = (e) => {
     e?.preventDefault();
-
     if (onSearch) {
       onSearch({
         keyword: keyword || "",
       });
     }
-
     setShowDropdown(false);
   };
+
   const handleSelectProduct = (product) => {
     setKeyword(product.name);
-
     if (onSearch) {
       onSearch({
         keyword: product.name,
       });
     }
-
     setShowDropdown(false);
   };
 
@@ -119,7 +105,7 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
           <Search
             size={20}
-            className="text-slate-400 group-focus-within:text-slate-900 transition-colors"
+            className="text-slate-400 group-focus-within:text-blue-500 transition-colors"
           />
         </div>
 
@@ -129,13 +115,13 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onFocus={() => keyword.trim() && setShowDropdown(true)}
-          className="w-full pl-14 pr-32 py-5 bg-white border border-slate-100 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] focus:outline-none focus:ring-4 focus:ring-slate-100 focus:border-slate-200 transition-all text-slate-800 placeholder:text-slate-400 font-medium"
+          className="w-full pl-14 pr-36 py-5 bg-white border border-slate-100 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-slate-900 placeholder:text-slate-400 font-medium"
         />
 
         <div className="absolute inset-y-2 right-2 flex items-center">
           <button
             type="submit"
-            className="h-full px-8 bg-slate-900 text-white text-sm font-black uppercase tracking-widest rounded-[1.5rem] hover:bg-blue-600 transition-all active:scale-95 shadow-lg shadow-slate-200"
+            className="h-full px-8 bg-blue-600 text-white text-sm font-black uppercase tracking-widest rounded-[1.5rem] hover:bg-blue-500 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
           >
             Tìm kiếm
           </button>
@@ -146,7 +132,7 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
           <div className="absolute top-[calc(100%+10px)] left-0 w-full bg-white rounded-[2rem] shadow-2xl border border-slate-100 z-50 overflow-hidden">
             {isSearching ? (
               <div className="px-6 py-5 flex items-center gap-3 text-slate-500">
-                <Loader size={18} className="animate-spin" />
+                <Loader size={18} className="animate-spin text-blue-500" />
                 Đang tìm kiếm...
               </div>
             ) : searchResults.length > 0 ? (
@@ -189,11 +175,10 @@ export default function SearchFilter({ defaultKeyword = "", onSearch }) {
       <div className="mt-5 flex flex-wrap justify-center gap-x-6 gap-y-2">
         {brands.map((brand) => (
           <button
-            key={brand}
+            key={brand.id || brand.name}
             type="button"
             onClick={() => {
               setKeyword(brand.name);
-
               if (onSearch) {
                 onSearch({
                   keyword: brand.name,

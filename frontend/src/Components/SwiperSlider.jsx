@@ -7,7 +7,7 @@ import ProductCard from "./ProductCard";
 
 function SwiperSlider({
   items = [],
-  slidesPerView = { default: 1.25, md: 2, lg: 3, xl: 4 },
+  slidesPerView = { default: 1.5, md: 2, lg: 3, xl: 4 },
 }) {
   if (!Array.isArray(items) || items.length === 0) {
     return (
@@ -20,23 +20,19 @@ function SwiperSlider({
   return (
     <Swiper
       modules={[Navigation, Pagination, Autoplay]}
-      spaceBetween={20}
-      slidesPerView={slidesPerView.default || 1.25}
+      spaceBetween={32}
+      slidesPerView={1.2}
       navigation
       pagination={{ clickable: true }}
       autoplay={{ delay: 3000, disableOnInteraction: false }}
       breakpoints={{
         768: {
-          slidesPerView: slidesPerView.md || 2,
+          slidesPerView: 2,
           spaceBetween: 24,
         },
         1024: {
-          slidesPerView: slidesPerView.lg || 3,
-          spaceBetween: 30,
-        },
-        1280: {
-          slidesPerView: slidesPerView.xl || 4,
-          spaceBetween: 32,
+          slidesPerView: 3,
+          spaceBetween: 28,
         },
       }}
       className="!pb-14 !px-2 product-swiper"

@@ -47,10 +47,10 @@ function ProductCard({ product, variant = "default" }) {
 
   return (
     <article
-      className={`product-card group relative h-full flex flex-col overflow-hidden rounded-2xl border border-[#2c2c2e] bg-[#1c1c1e] text-white shadow-sm hover:border-[#3c3c3e] transition-colors ${isLarge ? "md:flex-row" : ""}`}
+      className={`product-card group relative h-full flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white text-slate-900 shadow-sm hover:border-slate-300 transition-colors ${isLarge ? "md:flex-row" : ""}`}
     >
       <div
-        className={`relative overflow-hidden bg-white/5 flex items-center justify-center ${isLarge ? "md:w-1/2" : ""}`}
+        className={`relative overflow-hidden bg-slate-50 flex items-center justify-center ${isLarge ? "md:w-1/2" : ""}`}
       >
         <img
           src={displayImage}
@@ -61,7 +61,7 @@ function ProductCard({ product, variant = "default" }) {
           aria-label="Thêm vào giỏ"
           onClick={handleAddToCart}
           disabled={loading || stockCount <= 0}
-          className="absolute top-3 right-3 bg-[#121212]/80 text-white p-2 rounded-full shadow border border-transparent hover:bg-gray-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          className="absolute top-3 right-3 bg-white/80 text-slate-900 p-2 rounded-full shadow border border-slate-100 hover:bg-slate-100 transition disabled:opacity-60 disabled:cursor-not-allowed"
           title={stockCount <= 0 ? "Hết hàng" : "Thêm vào giỏ"}
         >
           {loading ? "..." : <ShoppingCart className="w-5 h-5 p-0.5" />}
@@ -72,35 +72,35 @@ function ProductCard({ product, variant = "default" }) {
         className={`flex flex-1 flex-col gap-2 p-5 ${isLarge ? "md:w-1/2" : ""}`}
       >
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">
             {brandName}
           </span>
           {stockCount > 0 ? (
-            <span className="text-xs text-green-500">{stockCount} còn</span>
+            <span className="text-xs text-green-600">{stockCount} còn</span>
           ) : (
-            <span className="text-xs text-red-500 font-bold">Hết hàng</span>
+            <span className="text-xs text-red-600 font-bold">Hết hàng</span>
           )}
         </div>
 
         <h3
-          className={`${isLarge ? "text-2xl md:text-3xl" : "text-lg"} font-bold text-white line-clamp-1`}
+          className={`${isLarge ? "text-2xl md:text-3xl" : "text-lg"} font-bold text-slate-900 line-clamp-1`}
         >
           {product.name}
         </h3>
 
         {product.description && (
           <p
-            className={`text-sm text-gray-400 ${isLarge ? "line-clamp-3" : "line-clamp-1"}`}
+            className={`text-sm text-slate-600 ${isLarge ? "line-clamp-3" : "line-clamp-1"}`}
           >
             {product.description}
           </p>
         )}
 
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-[#2c2c2e]">
-          <div className="text-lg font-bold text-white">{price} đ</div>
+        <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
+          <div className="text-lg font-bold text-slate-900">{price} đ</div>
           <Link
             to={`/product/detail/${product.id}`}
-            className="text-sm text-gray-300 hover:text-white font-medium transition-colors"
+            className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
           >
             Chi tiết
           </Link>

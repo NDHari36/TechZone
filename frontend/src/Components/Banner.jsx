@@ -42,7 +42,7 @@ const SaleBanner = ({ products, loading }) => {
   if (loading) {
     return (
       <section className="mx-auto w-full max-w-7xl px-4 md:px-6 py-12">
-        <div className="w-full h-[450px] bg-gray-800 animate-pulse rounded-[3rem]"></div>
+        <div className="w-full h-[450px] bg-slate-100 animate-pulse rounded-[3rem]"></div>
       </section>
     );
   }
@@ -62,16 +62,16 @@ const SaleBanner = ({ products, loading }) => {
       <div
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className="group relative w-full overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#0c1c38] to-black p-8 md:p-12 lg:p-16 shadow-2xl min-h-[450px] flex items-center transition-all duration-300"
+        className="group relative w-full overflow-hidden rounded-[3rem] bg-[#0a0a0a] p-8 md:p-12 lg:p-16 shadow-[0_25px_80px_rgba(0,0,0,0.5)] min-h-[450px] flex items-center transition-all duration-300 border border-white/10"
       >
-        <div className="absolute top-10 right-20 w-64 h-64 bg-[#0ef7f7]/20 blur-[100px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-64 h-64 bg-[#6c28d9]/20 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-10 right-20 w-64 h-64 bg-cyan-500/20 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-64 h-64 bg-blue-600/20 blur-[100px] rounded-full pointer-events-none" />
 
         {products.length > 1 && (
           <>
             <button
               onClick={handlePrev}
-              className="absolute left-2 md:left-6 top-1/2 z-30 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm border border-white/10 opacity-30 transition-all duration-300 hover:opacity-100 hover:bg-white/20 hover:scale-110"
+              className="absolute left-2 md:left-6 top-1/2 z-30 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-white backdrop-blur-md border border-white/10 hover:bg-white/10"
               aria-label="Previous slide"
             >
               <ChevronLeft size={28} />
@@ -79,7 +79,7 @@ const SaleBanner = ({ products, loading }) => {
 
             <button
               onClick={handleNext}
-              className="absolute right-2 md:right-6 top-1/2 z-30 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm border border-white/10 opacity-30 transition-all duration-300 hover:opacity-100 hover:bg-white/20 hover:scale-110"
+              className="absolute right-2 md:right-6 top-1/2 z-30 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/50 text-white backdrop-blur-sm border border-slate-100 opacity-30 transition-all duration-300 hover:opacity-100 hover:bg-white/70 hover:scale-110"
               aria-label="Next slide"
             >
               <ChevronRight size={28} />
@@ -102,7 +102,7 @@ const SaleBanner = ({ products, loading }) => {
                 <img
                   src={product.secondaryImage}
                   alt="Phone Accessory"
-                  className="absolute left-1/4 w-[150px] h-auto object-contain transform -translate-x-1/2 z-20 drop-shadow-2xl"
+                  className="absolute left-1/4 w-[150px] h-auto object-contain transform -translate-x-1/2 z-20 drop-shadow-lg"
                 />
               )}
               <img
@@ -112,18 +112,18 @@ const SaleBanner = ({ products, loading }) => {
                   "/images/placeholder.jpg"
                 }
                 alt={product.name}
-                className="relative w-auto max-w-[300px] md:max-w-[400px] h-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] z-10"
+                className="relative w-auto max-w-[300px] md:max-w-[400px] h-full object-contain drop-shadow-xl z-10"
               />
             </div>
           </div>
 
           <div className="w-full space-y-6 text-center md:w-1/2 md:text-left text-white">
             <div className="space-y-3">
-              <span className="inline-block px-4 py-1.5 bg-gray-900 text-white rounded-full text-sm font-semibold shadow-sm border border-gray-700">
+              <span className="inline-block px-4 py-1.5 bg-white/10 text-white border-white/20 backdrop-blur-md rounded-full text-sm font-semibold shadow-sm border border-slate-200">
                 {product.badgeText || "🔥 BEST SELLER"}
               </span>
-              <div className="flex items-center justify-center md:justify-start gap-2 text-white font-medium">
-                <span className="text-xl text-yellow-400">
+              <div className="flex items-center justify-center md:justify-start gap-2 text-slate-600 font-medium">
+                <span className="text-xl text-yellow-500">
                   <Zap size={18} fill="currentColor" />
                 </span>
                 <span className="uppercase tracking-widest text-sm">
@@ -143,7 +143,7 @@ const SaleBanner = ({ products, loading }) => {
             <div className="pt-4">
               <button
                 onClick={() => navigate(`/product/detail/${product.id}`)}
-                className="group mx-auto md:mx-0 flex items-center justify-center md:justify-start gap-3 bg-white text-gray-950 px-10 py-5 rounded-2xl font-black text-xl shadow-lg transition-transform hover:scale-105 active:scale-95"
+                className="group mx-auto md:mx-0 flex items-center justify-center md:justify-start gap-3 bg-gradient-to-r from-blue-500 to-cyan-400 text-white px-10 py-5 rounded-2xl font-black text-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-105 hover:shadow-blue-500/50"
               >
                 MUA NGAY
                 <ShoppingBag
@@ -163,8 +163,8 @@ const SaleBanner = ({ products, loading }) => {
                 onClick={() => setCurrentIndex(idx)}
                 className={`h-2.5 rounded-full transition-all duration-300 ${
                   currentIndex === idx
-                    ? "w-10 bg-white"
-                    : "w-3 bg-gray-500 hover:bg-gray-300"
+                    ? "w-10 bg-blue-500"
+                    : "w-3 bg-slate-400 hover:bg-slate-300"
                 }`}
                 aria-label={`Chuyển đến slide ${idx + 1}`}
               />
