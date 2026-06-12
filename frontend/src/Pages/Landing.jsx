@@ -92,7 +92,7 @@ function Landing() {
               <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 to-orange-500/10 blur-3xl rounded-full"></div>
 
               <img
-                src="../public/images/logo.jpg"
+                src="../../public/images/logo.jpg"
                 alt="Logo TechZone"
                 className="relative z-10 object-contain rounded-[3rem] shadow-2xl border border-gray-800"
               />
