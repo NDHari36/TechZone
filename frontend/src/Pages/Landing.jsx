@@ -20,7 +20,7 @@ function Landing() {
         const formattedProducts =
           data?.result?.map((item) => {
             const rawImage = item.image_url || item.thumbnailUrl || item.image;
-            let finalImage = "../public/images/logo.png";
+            let finalImage = "../public/images/logo.jpg";
             if (rawImage) {
               finalImage = rawImage.startsWith("http")
                 ? rawImage
