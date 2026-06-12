@@ -20,9 +20,9 @@ function Landing() {
         const formattedProducts =
           data?.result?.map((item) => {
             const rawImage = item.image_url || item.thumbnailUrl || item.image;
-            let finalImage = "../public/images/logo.jpg";
+            let finalImage = "../images/logo.jpg";
             if (rawImage) {
-              finalImage = rawImage.startsWith("http")
+              finalImage = rawImage.startsWith("https")
                 ? rawImage
                 : `${API_BASE_URL}${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
             }
@@ -93,7 +93,7 @@ function Landing() {
 
               <img
                 src="../public/images/logo.jpg"
-                alt="Sản phẩm nổi bật"
+                alt="Logo TechZone"
                 className="relative z-10 object-contain rounded-[3rem] shadow-2xl border border-gray-800"
               />
             </div>
