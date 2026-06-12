@@ -47,7 +47,7 @@ export default function HomePage() {
           {
             key: "apple",
             title: "Apple",
-            image: "./images/Apple.jpg",
+            image: "/images/Apple.jpg",
           },
           { key: "mac", title: "Mac", image: "/images/Mac.jpg" },
           { key: "ipad", title: "iPad", image: "/images/Ipad.jpg" },
@@ -64,7 +64,7 @@ export default function HomePage() {
           {
             key: "airpod",
             title: "AirPods",
-            image: "./images/Airpods.jpg",
+            image: "/images/Airpods.jpg",
           },
         ];
 
@@ -99,7 +99,7 @@ export default function HomePage() {
                   <img
                     src={tile.image}
                     alt={tile.title}
-                    className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-all duration-500"
+                    className="w-full h-full object-contain opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
                     onError={(e) => {
                       e.target.style.opacity = 0.5;
                     }}
@@ -130,7 +130,7 @@ export default function HomePage() {
           <button
             type="button"
             onClick={() => navigate("/Category")}
-            className="px-5 py-3 rounded-full bg-slate-900 text-white hover:bg-blue-600 font-bold text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-colors"
+            className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold flex items-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95 shadow-md shadow-slate-900/10 hover:shadow-blue-600/20"
           >
             TẤT CẢ <ArrowRight size={16} />
           </button>
@@ -173,41 +173,52 @@ export default function HomePage() {
                 desc: "Sản phẩm đạt tiêu chuẩn chất lượng cao nhất.",
                 Icon: ShieldCheck,
                 color: "text-blue-600",
+                hoverColor: "group-hover:text-blue-600",
+                hoverShadow: "hover:shadow-blue-500/5",
                 bg: "bg-blue-50",
-                border: "border-blue-200",
+                border: "border-blue-200/80",
+                rotate: "group-hover:rotate-3",
               },
               {
                 title: "Giao nhanh",
                 desc: "Nhận máy ngay trong ngày tại nội thành.",
                 Icon: Truck,
                 color: "text-purple-600",
+                hoverColor: "group-hover:text-purple-600",
+                hoverShadow: "hover:shadow-purple-500/5",
                 bg: "bg-purple-50",
-                border: "border-purple-200",
+                border: "border-purple-200/80",
+                rotate: "group-hover:-rotate-3",
               },
               {
                 title: "Hỗ trợ tận tâm",
                 desc: "Chuyên viên sẵn sàng giải đáp 24/7.",
                 Icon: Headset,
                 color: "text-orange-600",
+                hoverColor: "group-hover:text-orange-600",
+                hoverShadow: "hover:shadow-orange-500/5",
                 bg: "bg-orange-50",
-                border: "border-orange-200",
+                border: "border-orange-200/80",
+                rotate: "group-hover:rotate-3",
               },
             ].map((item, i) => (
               <div
                 key={i}
                 className={`group p-8 bg-white border ${item.border}
-          rounded-[2rem] shadow-md hover:shadow-xl
+          rounded-[2rem] shadow-md hover:shadow-2xl ${item.hoverShadow}
           hover:-translate-y-2 transition-all duration-500`}
               >
                 <div
                   className={`w-16 h-16 ${item.bg} ${item.color}
             rounded-2xl flex items-center justify-center mb-6
-            group-hover:scale-110 transition-transform duration-300`}
+            group-hover:scale-110 ${item.rotate} transition-transform duration-300`}
                 >
                   <item.Icon size={30} />
                 </div>
 
-                <h4 className="text-xl font-black uppercase text-slate-900 mb-3">
+                <h4
+                  className={`text-xl font-black uppercase text-slate-900 mb-3 ${item.hoverColor} transition-colors`}
+                >
                   {item.title}
                 </h4>
 

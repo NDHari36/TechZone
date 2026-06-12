@@ -81,7 +81,7 @@ function Landing() {
                 </Link>
                 <a
                   href="#features"
-                  className="px-5 py-3 rounded-full bg-slate-900 text-white hover:bg-blue-600 font-bold text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-colors"
+                  className="border-2 border-slate-200 hover:border-slate-300 text-slate-700 px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-1 active:scale-95 hover:bg-slate-50"
                 >
                   Tìm hiểu thêm ↓
                 </a>
@@ -94,7 +94,7 @@ function Landing() {
               <img
                 src="/images/Logo.jpg"
                 alt="Logo TechZone"
-                className="relative z-10 object-contain rounded-[3rem] shadow-2xl border border-gray-800"
+                className="relative z-10 object-contain rounded-[3rem] shadow-2xl border border-gray-800 animate-[floating_6s_ease-in-out_infinite]"
               />
             </div>
           </div>
@@ -122,12 +122,12 @@ function Landing() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Tuyển chọn */}
-            <div className="group bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6">
+            <div className="group bg-white rounded-[2rem] p-8 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                 <ShieldCheck size={28} />
               </div>
 
-              <h3 className="text-2xl font-black text-slate-900 mb-3">
+              <h3 className="text-2xl font-black text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
                 Tuyển chọn
               </h3>
 
@@ -138,12 +138,12 @@ function Landing() {
             </div>
 
             {/* Giao nhanh */}
-            <div className="group bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
+            <div className="group bg-white rounded-[2rem] p-8 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:shadow-purple-500/5 hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                 <Truck size={28} />
               </div>
 
-              <h3 className="text-2xl font-black text-slate-900 mb-3">
+              <h3 className="text-2xl font-black text-slate-900 mb-3 group-hover:text-purple-600 transition-colors">
                 Giao nhanh
               </h3>
 
@@ -154,12 +154,12 @@ function Landing() {
             </div>
 
             {/* Tận tâm */}
-            <div className="group bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6">
+            <div className="group bg-white rounded-[2rem] p-8 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:shadow-orange-500/5 hover:-translate-y-2 transition-all duration-300">
+              <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                 <Headset size={28} />
               </div>
 
-              <h3 className="text-2xl font-black text-slate-900 mb-3">
+              <h3 className="text-2xl font-black text-slate-900 mb-3 group-hover:text-orange-600 transition-colors">
                 Hỗ trợ tận tâm
               </h3>
 
@@ -185,7 +185,7 @@ function Landing() {
               </p>
               <Link
                 to="/store"
-                className="inline-block bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-lg"
+                className="inline-block bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-xl hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 transition-all shadow-lg"
               >
                 VÀO CỬA HÀNG ➔
               </Link>
