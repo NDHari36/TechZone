@@ -1,6 +1,4 @@
--- =====================================
--- 1. SCHEMA
--- =====================================
+CREATE DATABASE TechZone
 
 CREATE TABLE roles (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -18,7 +16,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE
 );
-
 
 CREATE TABLE user_roles (
     user_id BIGINT NOT NULL,
@@ -110,15 +107,6 @@ CREATE TABLE inventories (
     FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE CASCADE
 );
 
-CREATE TABLE imeis (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    variant_id BIGINT NOT NULL,
-    imei VARCHAR(32) NOT NULL UNIQUE,
-    status VARCHAR(20) NOT NULL,
-    FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE CASCADE,
-    INDEX idx_variant (variant_id)
-);
-
 CREATE TABLE carts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL UNIQUE,
@@ -191,40 +179,6 @@ CREATE TABLE order_coupons (
     PRIMARY KEY (order_id, coupon_id),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (coupon_id) REFERENCES coupons(id)
-);
-
-CREATE TABLE payments (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    order_id BIGINT NOT NULL UNIQUE,
-    method VARCHAR(20) NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    tx_id VARCHAR(120),
-    payload_json JSON,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
-);
-
-CREATE TABLE shipments (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    order_id BIGINT NOT NULL UNIQUE,
-    carrier VARCHAR(40) NOT NULL,
-    tracking_code VARCHAR(120),
-    status VARCHAR(20) NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
-);
-
-CREATE TABLE warranty_tickets (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    imei_id BIGINT NOT NULL,
-    order_id BIGINT NOT NULL,
-    code VARCHAR(40) NOT NULL UNIQUE,
-    start_at DATE NOT NULL,
-    end_at DATE NOT NULL,
-    status VARCHAR(20) NOT NULL,
-    note TEXT,
-    FOREIGN KEY (imei_id) REFERENCES imeis(id),
-    FOREIGN KEY (order_id) REFERENCES orders(id)
 );
 
 CREATE TABLE reviews (

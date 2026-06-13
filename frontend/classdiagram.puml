@@ -91,12 +91,6 @@ class Inventory {
   +Timestamp updatedAt
 }
 
-class IMEI {
-  +Long id
-  +Long productId
-  +String imei
-  +String status
-}
 
 Brand "1" --> "0..*" Product : brands
 Category "0..1" <-- "0..*" Category : parent
@@ -104,7 +98,6 @@ Category "1" <-- "0..*" Product : categorizes
 Product "1" *-- "0..*" ProductImage : images
 Product "1" *-- "0..*" ProductSpec : specs
 Product "1" o-- "0..1" Inventory : inventory
-Product "1" *-- "0..*" IMEI : serials
 
 ' ======== CART ========
 class Cart {
@@ -158,40 +151,10 @@ class OrderItem {
   +Decimal lineTotal
 }
 
-class OrderItemIMEI <<association>> {
-  +Long orderItemId
-  +Long imeiId
-  ..PK.. (orderItemId, imeiId)
-}
-
 User "1" --> "0..*" Order : places
 Order "1" *-- "1..*" OrderItem : lines
 OrderItem "*" --> "1" Product : product
-OrderItemIMEI "*" --> "1" OrderItem
-OrderItemIMEI "*" --> "1" IMEI
 
-' ======== PAYMENT / SHIPMENT ========
-class Payment {
-  +Long id
-  +Long orderId
-  +String method
-  +String status
-  +String txId
-  +Json payloadJson
-  +Timestamp updatedAt
-}
-
-class Shipment {
-  +Long id
-  +Long orderId
-  +String carrier
-  +String trackingCode
-  +String status
-  +Timestamp updatedAt
-}
-
-Order "1" o-- "0..1" Payment : payment (unique)
-Order "1" o-- "0..1" Shipment : shipment (unique)
 
 ' ======== COUPON ========
 class Coupon {
@@ -233,19 +196,5 @@ class Review {
 User "1" --> "0..*" Review : writes
 Product "1" <-- "0..*" Review : for
 
-' ======== WARRANTY ========
-class WarrantyTicket {
-  +Long id
-  +Long imeiId
-  +Long orderId
-  +String code
-  +Date startAt
-  +Date endAt
-  +String status
-  +String note
-}
-
-IMEI "1" --> "0..*" WarrantyTicket : coveredBy
-Order "1" --> "0..*" WarrantyTicket : issues
 
 @enduml
