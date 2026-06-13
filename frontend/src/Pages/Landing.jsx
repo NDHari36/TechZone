@@ -61,7 +61,7 @@ function Landing() {
         <div className="mx-auto max-w-6xl px-6 py-20 relative z-10 w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h1 className="text-6xl md:text-8xl font-black leading-tight tracking-tighter text-slate-900">
+              <h1 className="text-5xl md:text-7xl xl:text-8xl font-black leading-tight tracking-tighter text-slate-900">
                 {/* Chào mừng đến với <br /> */}
                 <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent font-Bebas tracking-wider italic">
                   TechZone
@@ -88,7 +88,7 @@ function Landing() {
               </div>
             </div>
 
-            <div className="hidden md:block relative">
+            <div className="block md:block relative">
               <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 to-orange-500/10 blur-3xl rounded-full"></div>
 
               <img
@@ -207,10 +207,12 @@ function Landing() {
                           radial-gradient(at 80% 80%, rgba(255, 200, 200, 0.1), transparent 50%);
         }
         @keyframes floating {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
+          0%,100%{transform:translateY(0);
+          }
+          50%{transform:translateY(-8px);
+          }
         }
-      `,
+          `,
         }}
       />
     </main>

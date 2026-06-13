@@ -281,13 +281,11 @@ function Orders() {
                                     order.id || order.orderId || id,
                                   )
                                 }
-                                className="w-full sm:w-auto px-5 py-2.5 text-sm font-black text-gray-900 bg-white border-2 border-gray-900 rounded-xl uppercase flex items-center justify-center gap-2 transition-all hover:bg-gray-900 hover:text-white active:scale-95"
+                                className="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 hover:bg-amber-100 hover:border-amber-300 hover:text-amber-800 focus:outline-none focus:ring-4 focus:ring-amber-200 active:scale-95 "
                               >
                                 <Star
                                   size={16}
-                                  className={
-                                    reviewForm.rating ? "fill-current" : ""
-                                  }
+                                  className="fill-current text-amber-500"
                                 />
                                 Đánh giá
                               </button>

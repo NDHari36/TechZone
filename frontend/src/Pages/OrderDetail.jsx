@@ -299,9 +299,13 @@ function OrderDetail() {
                       !it.hasReviewed && (
                         <button
                           onClick={() => handleOpenReview(it)}
-                          className="px-4 py-2 text-xs font-black text-gray-900 border-2 border-gray-900 bg-white rounded-lg uppercase hover:bg-gray-900 hover:text-white transition-all active:scale-95 flex items-center gap-1"
+                          className="px-4 py-2  text-xs font-bold  text-amber-700  bg-amber-50  border border-amber-200  rounded-lg  flex items-center gap-1  transition-all duration-200  hover:bg-amber-100  hover:border-amber-300  hover:text-amber-800  focus:outline-none  focus:ring-4  focus:ring-amber-200  active:scale-95"
                         >
-                          <Star size={14} /> Đánh giá
+                          <Star
+                            size={14}
+                            className="fill-current text-amber-500"
+                          />
+                          Đánh giá
                         </button>
                       )}
                     {(order.status?.toLowerCase() === "completed" ||
