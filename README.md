@@ -180,39 +180,36 @@ Hệ thống sở hữu giao diện trực quan, hiện đại và hoàn toàn r
 
 - **Trang chủ (Home)**
 
-![Giao diện TechZone](image.png)
+<img width="1855" height="941" alt="image" src="https://github.com/user-attachments/assets/57499c06-7d0e-45eb-8b0d-5c04b5cdc0d1" />
 Hiển thị danh mục công nghệ nổi bật, sản phẩm bán chạy, sản phẩm mới và banner khuyến mãi động.
 
 - **Chi tiết sản phẩm (Details)**
 
-![alt text](image-2.png)
+<img width="657" height="823" alt="image" src="https://github.com/user-attachments/assets/1bf37ca2-b7c4-49f5-8055-d34dce6535d2" />
 Xem thông số kỹ thuật chi tiết (RAM, bộ nhớ, màu sắc), xem hình ảnh chất lượng cao và đánh giá từ khách hàng khác.
 
 - **Giỏ hàng **
 
-![alt text](image-3.png)
+<img width="1338" height="951" alt="image" src="https://github.com/user-attachments/assets/6be0cf5d-001a-4411-8331-aed9e2de6075" />
 
 - **Dặt Hàng:**
 
-![alt text](image-4.png)
-
-- ** (Admin Dashboard):**
-
+<img width="1338" height="951" alt="image" src="https://github.com/user-attachments/assets/81ad62c3-f251-4dea-a694-63752a3e81ce" />
 ### 4.2. Giao diện quản trị
 
 - **Thống kê tổng quan**
 
-![alt text](image-5.png)
+<img width="1850" height="944" alt="image" src="https://github.com/user-attachments/assets/392b9ed3-d51a-4546-97c6-221486df73b6" />
 Biểu đồ doanh thu trực quan, thống kê đơn hàng và lượng người dùng hoạt động theo thời gian thực (real-time).
 
 - **Quản lý danh mục & Sản phẩm**
 
-![alt text](image-6.png)
+<img width="1855" height="941" alt="image" src="https://github.com/user-attachments/assets/18619044-7853-4db9-ab4a-a684cbcb9bd2" />
 Giao diện thêm/sửa/xóa sản phẩm đa biến thể trực quan, tích hợp upload ảnh trực tiếp lên Cloudinary.
 
 - **Quản lý đơn hàng & Kho hàng**
 
-![alt text](image-7.png)
+<img width="1855" height="941" alt="image" src="https://github.com/user-attachments/assets/4a48a974-af91-41f3-aeb6-ccf37576e4c7" />
 Theo dõi tình trạng các đơn hàng, cập nhật số lượng tồn kho tự động.
 
 ---
