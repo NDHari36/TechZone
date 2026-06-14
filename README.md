@@ -125,26 +125,37 @@ Sơ đồ dưới đây biểu diễn cơ chế tự động gia hạn token (Si
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client as Client App (React)
-    participant Server as Backend API (Express)
-    database DB as Database (MySQL)
 
-    Client->>Server: Request kèm Access Token (Headers: Auth Bearer)
+    actor Client as "Client App (React)"
+    participant Server as "Backend API (Express)"
+    participant DB as "Database (MySQL)"
+
+    Client->>Server: Request kèm Access Token (Authorization Bearer)
+    
     alt Access Token hợp lệ
         Server->>Client: Trả về dữ liệu thành công (200 OK)
     else Access Token hết hạn
         Server->>Client: Trả về lỗi 401 Unauthorized
+
         Note over Client: Axios Interceptor phát hiện lỗi 401
-        Client->>Server: POST /api/auth/refresh-token (Kèm Refresh Token trong Cookie HttpOnly)
-        Server->>DB: Kiểm tra Refresh Token trong DB/Verify JWT
+
+        Client->>Server: POST /api/auth/refresh-token
+        Note over Client,Server: Refresh Token nằm trong HttpOnly Cookie
+
+        Server->>DB: Kiểm tra Refresh Token / Verify JWT
+
         alt Refresh Token hợp lệ
-            Server->>Client: Trả về Access Token mới (accessToken)
-            Note over Client: Lưu Access Token mới vào localStorage
-            Client->>Server: Thực hiện lại Request gốc (Retried Request)
+            Server->>Client: Trả về Access Token mới
+
+            Note over Client: Lưu Access Token mới
+
+            Client->>Server: Gửi lại request ban đầu
+
             Server->>Client: Trả về dữ liệu thành công (200 OK)
-        else Refresh Token hết hạn/Hỏng
+        else Refresh Token hết hạn hoặc không hợp lệ
             Server->>Client: Trả về lỗi 401/403
-            Note over Client: Xóa localStorage, điều hướng về /signin
+
+            Note over Client: Xóa token và chuyển về /signin
         end
     end
 ```
