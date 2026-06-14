@@ -125,70 +125,82 @@ Sơ đồ dưới đây biểu diễn cơ chế tự động gia hạn token (Si
 ```mermaid
 sequenceDiagram
     actor User
-    participant Client as React Client
-    participant API as Express API
-    participant Auth as authMiddleware
-    participant Axios as Axios Interceptor
+    participant Client as Client (React FE)
+    participant Axios as Axios Interceptor (FE)
+    participant Server as Server (Express BE)
 
     %% LOGIN
     User->>Client: Nhập username/password
-    Client->>API: POST /auth/signin
 
-    API->>API: Kiểm tra tài khoản & mật khẩu
+    Client->>Axios: login()
+    Axios->>Server: POST /auth/signin
+
+    Server->>Server: Kiểm tra username/password
 
     alt Đăng nhập thành công
-        API->>API: Generate Access Token (15m)
-        API->>API: Generate Refresh Token (7d)
 
-        API-->>Client: accessToken + user info
-        API-->>Client: Set-Cookie(refreshToken)
+        Server->>Server: Generate Access Token (15m)
+        Server->>Server: Generate Refresh Token (7d)
 
-        Note over Client: accessToken lưu localStorage
-        Note over Client: refreshToken lưu HttpOnly Cookie
-    else Sai thông tin
-        API-->>Client: 401 Unauthorized
+        Server-->>Axios: accessToken + userInfo
+        Server-->>Axios: Set-Cookie(refreshToken)
+
+        Axios-->>Client: Login Success
+
+        Note over Client: accessToken → localStorage
+        Note over Client: userInfo → localStorage
+
+    else Sai thông tin đăng nhập
+
+        Server-->>Axios: 401 Unauthorized
+        Axios-->>Client: Hiển thị lỗi
+
     end
 
     %% REQUEST API
     User->>Client: Thao tác chức năng
-    Client->>API: Request + Bearer Access Token
 
-    API->>Auth: Verify Access Token
+    Client->>Axios: Gọi API
+
+    Axios->>Axios: Đọc authToken từ localStorage
+    Axios->>Server: Request + Authorization Bearer Token
 
     alt Access Token hợp lệ
-        Auth-->>API: req.user
-        API-->>Client: 200 OK + Data
+
+        Server->>Server: Verify JWT
+
+        Server-->>Axios: 200 OK + Data
+        Axios-->>Client: Trả dữ liệu
 
     else Access Token hết hạn
 
-        API-->>Client: 401 Unauthorized
+        Server-->>Axios: 401 Unauthorized
 
-        Client->>Axios: Interceptor phát hiện 401
+        Axios->>Axios: Phát hiện lỗi 401
 
-        Axios->>API: POST /auth/refresh-token
-        Note over Axios,API: Refresh Token được gửi tự động qua HttpOnly Cookie
+        Axios->>Server: POST /auth/refresh-token
+        Note over Axios,Server: Refresh Token gửi tự động qua HttpOnly Cookie
 
-        API->>API: Verify Refresh Token
+        Server->>Server: Verify Refresh Token
 
         alt Refresh Token hợp lệ
 
-            API->>API: Generate New Access Token
+            Server->>Server: Generate New Access Token
 
-            API-->>Axios: New Access Token
+            Server-->>Axios: New Access Token
 
-            Axios->>Axios: localStorage.setItem(authToken)
+            Axios->>Axios: Update localStorage(authToken)
 
-            Axios->>API: Retry Request với token mới
+            Axios->>Server: Retry Request với token mới
 
-            API->>Auth: Verify New Access Token
+            Server->>Server: Verify JWT
 
-            Auth-->>API: req.user
+            Server-->>Axios: 200 OK + Data
+            Axios-->>Client: Trả dữ liệu
 
-            API-->>Client: 200 OK + Data
+        else Refresh Token hết hạn hoặc không hợp lệ
 
-        else Refresh Token hết hạn / không hợp lệ
-
-            API-->>Axios: 403 Forbidden
+            Server-->>Axios: 403 Forbidden
 
             Axios->>Axios: Remove authToken
             Axios->>Axios: Remove userInfo
@@ -197,21 +209,26 @@ sequenceDiagram
 
         end
 
-    else Access Token không hợp lệ
+    else Token không hợp lệ
 
-        API-->>Client: 403 Forbidden
+        Server-->>Axios: 403 Forbidden
+        Axios-->>Client: Hiển thị lỗi
 
     end
 
     %% LOGOUT
     User->>Client: Logout
-    Client->>API: POST /auth/logout
 
-    API-->>Client: Clear refreshToken Cookie
-    Client->>Client: Remove authToken
-    Client->>Client: Remove userInfo
+    Client->>Axios: logout()
 
-    Client-->>User: Chuyển về trang đăng nhập
+    Axios->>Server: POST /auth/logout
+
+    Server-->>Axios: Clear refreshToken Cookie
+
+    Axios->>Axios: Remove authToken
+    Axios->>Axios: Remove userInfo
+
+    Axios-->>Client: Logout Success
 ```
 
 ### 3.2. Sơ đồ luồng đặt hàng & Cập nhật kho hàng tự động
