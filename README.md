@@ -124,40 +124,94 @@ Sơ đồ dưới đây biểu diễn cơ chế tự động gia hạn token (Si
 
 ```mermaid
 sequenceDiagram
-    autonumber
+    actor User
+    participant Client as React Client
+    participant API as Express API
+    participant Auth as authMiddleware
+    participant Axios as Axios Interceptor
 
-    actor Client as "Client App (React)"
-    participant Server as "Backend API (Express)"
-    participant DB as "Database (MySQL)"
+    %% LOGIN
+    User->>Client: Nhập username/password
+    Client->>API: POST /auth/signin
 
-    Client->>Server: Request kèm Access Token (Authorization Bearer)
-    
+    API->>API: Kiểm tra tài khoản & mật khẩu
+
+    alt Đăng nhập thành công
+        API->>API: Generate Access Token (15m)
+        API->>API: Generate Refresh Token (7d)
+
+        API-->>Client: accessToken + user info
+        API-->>Client: Set-Cookie(refreshToken)
+
+        Note over Client: accessToken lưu localStorage
+        Note over Client: refreshToken lưu HttpOnly Cookie
+    else Sai thông tin
+        API-->>Client: 401 Unauthorized
+    end
+
+    %% REQUEST API
+    User->>Client: Thao tác chức năng
+    Client->>API: Request + Bearer Access Token
+
+    API->>Auth: Verify Access Token
+
     alt Access Token hợp lệ
-        Server->>Client: Trả về dữ liệu thành công (200 OK)
+        Auth-->>API: req.user
+        API-->>Client: 200 OK + Data
+
     else Access Token hết hạn
-        Server->>Client: Trả về lỗi 401 Unauthorized
 
-        Note over Client: Axios Interceptor phát hiện lỗi 401
+        API-->>Client: 401 Unauthorized
 
-        Client->>Server: POST /api/auth/refresh-token
-        Note over Client,Server: Refresh Token nằm trong HttpOnly Cookie
+        Client->>Axios: Interceptor phát hiện 401
 
-        Server->>DB: Kiểm tra Refresh Token / Verify JWT
+        Axios->>API: POST /auth/refresh-token
+        Note over Axios,API: Refresh Token được gửi tự động qua HttpOnly Cookie
+
+        API->>API: Verify Refresh Token
 
         alt Refresh Token hợp lệ
-            Server->>Client: Trả về Access Token mới
 
-            Note over Client: Lưu Access Token mới
+            API->>API: Generate New Access Token
 
-            Client->>Server: Gửi lại request ban đầu
+            API-->>Axios: New Access Token
 
-            Server->>Client: Trả về dữ liệu thành công (200 OK)
-        else Refresh Token hết hạn hoặc không hợp lệ
-            Server->>Client: Trả về lỗi 401/403
+            Axios->>Axios: localStorage.setItem(authToken)
 
-            Note over Client: Xóa token và chuyển về /signin
+            Axios->>API: Retry Request với token mới
+
+            API->>Auth: Verify New Access Token
+
+            Auth-->>API: req.user
+
+            API-->>Client: 200 OK + Data
+
+        else Refresh Token hết hạn / không hợp lệ
+
+            API-->>Axios: 403 Forbidden
+
+            Axios->>Axios: Remove authToken
+            Axios->>Axios: Remove userInfo
+
+            Axios-->>Client: Redirect /signin
+
         end
+
+    else Access Token không hợp lệ
+
+        API-->>Client: 403 Forbidden
+
     end
+
+    %% LOGOUT
+    User->>Client: Logout
+    Client->>API: POST /auth/logout
+
+    API-->>Client: Clear refreshToken Cookie
+    Client->>Client: Remove authToken
+    Client->>Client: Remove userInfo
+
+    Client-->>User: Chuyển về trang đăng nhập
 ```
 
 ### 3.2. Sơ đồ luồng đặt hàng & Cập nhật kho hàng tự động
