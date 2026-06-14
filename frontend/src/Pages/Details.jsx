@@ -208,7 +208,8 @@ function Details() {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Thêm vào giỏ hàng thất bại");
+      if (!res.ok)
+        throw new Error("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng");
 
       localStorage.setItem("cartEvent", "updated:" + Date.now());
       window.dispatchEvent(new Event("cartUpdated"));
