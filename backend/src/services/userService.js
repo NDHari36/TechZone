@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 
 class UserService {
-  // GET USER BY USERNAME (giữ lại vì controller dùng)
   static async getUserByUsername(username) {
     return await User.findByUsername(username);
   }
@@ -90,6 +89,9 @@ class UserService {
     const ok = await User.delete(userId);
     if (!ok) throw new Error("Không tìm thấy user");
     return true;
+  }
+  static async getUserById(id) {
+    return await User.getById(id);
   }
 }
 

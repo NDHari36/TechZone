@@ -34,7 +34,6 @@ function SignIn() {
 
       const token = result?.accessToken;
       const user = result?.user;
-
       if (!token) throw new Error("Không tìm thấy token");
 
       localStorage.setItem("authToken", token);

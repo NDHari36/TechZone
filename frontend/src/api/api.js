@@ -9,6 +9,9 @@ const api = axios.create({
   },
 });
 
+let isRefreshing = false;
+let refreshPromise = null;
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("authToken");
   if (token) {
@@ -23,19 +26,39 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      error.response?.data?.code === "TOKEN_EXPIRED" &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/auth/signin") &&
+      !originalRequest.url.includes("/auth/refresh-token")
+    ) {
       originalRequest._retry = true;
 
       try {
-        const res = await axios.post(
-          `${API_BASE_URL}/auth/refresh-token`,
-          {},
-          { withCredentials: true },
-        );
+        if (!isRefreshing) {
+          isRefreshing = true;
 
-        const newToken = res.data.accessToken;
+          refreshPromise = axios
+            .post(
+              `${API_BASE_URL}/auth/refresh-token`,
+              {},
+              { withCredentials: true },
+            )
+            .then((res) => {
+              const newToken = res.data.accessToken;
 
-        localStorage.setItem("authToken", newToken);
+              localStorage.setItem("authToken", newToken);
+
+              return newToken;
+            })
+            .finally(() => {
+              isRefreshing = false;
+              refreshPromise = null;
+            });
+        }
+
+        const newToken = await refreshPromise;
 
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
 

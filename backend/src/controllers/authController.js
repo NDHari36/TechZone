@@ -63,7 +63,7 @@ exports.login = async (req, res) => {
         role_name: user.role_name,
       },
       process.env.JWT_ACCESS_SECRET,
-      { expiresIn: "15m" },
+      { expiresIn: "10s" },
     );
 
     const refreshToken = jwt.sign(
@@ -80,7 +80,7 @@ exports.login = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return res.json({
@@ -103,13 +103,27 @@ exports.refreshToken = async (req, res) => {
         message: "Không có refresh token",
       });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    const user = await userService.getUserById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Người dùng không tồn tại",
+      });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({
+        message: "Tài khoản đã bị khóa",
+      });
+    }
 
     const newAccessToken = jwt.sign(
       {
-        id: decoded.id,
-        role_id: decoded.role_id,
-        role_name: decoded.role_name,
+        id: user.id,
+        role_id: user.role_id,
+        role_name: user.role_name,
       },
       process.env.JWT_ACCESS_SECRET,
       {
@@ -132,10 +146,12 @@ exports.logout = (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
     sameSite: "lax",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
   });
 
-  return res.json({ message: "Logged out" });
+  return res.json({
+    message: "Đăng xuất thành công",
+  });
 };
 
 // RESET PASSWORD DEFAULT

@@ -16,8 +16,16 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
+      console.log(error.name);
+
       return res.status(401).json({
+        code: "TOKEN_EXPIRED",
         message: "Access token hết hạn",
+      });
+
+      return res.status(403).json({
+        code: "INVALID_TOKEN",
+        message: "Token không hợp lệ",
       });
     }
 
