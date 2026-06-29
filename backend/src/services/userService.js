@@ -81,17 +81,25 @@ class UserService {
     return await User.getAll();
   }
 
-  static async updateUser(userId, data) {
-    return await User.updateAdmin(userId, data);
-  }
+  static async updateUser(userId, data, io) {
+    const result = await User.updateAdmin(userId, data);
 
-  static async deleteUser(userId) {
+    if (data.is_active === false || data.is_active === 0) {
+      if (io) {
+        io.emit("force_logout", { userId: userId });
+      }
+    }
+    return result;
+  }
+  static async deleteUser(userId, io) {
     const ok = await User.delete(userId);
     if (!ok) throw new Error("Không tìm thấy user");
+
+    if (io) {
+      io.emit("force_logout", { userId: userId });
+    }
+
     return true;
-  }
-  static async getUserById(id) {
-    return await User.getById(id);
   }
 }
 
