@@ -41,8 +41,8 @@ function AppContent() {
     socket.on("force_logout", () => {
       localStorage.clear();
       socket.disconnect();
-      alert("Tài khoản của bạn đã bị khóa.");
       navigate("/signin", { replace: true });
+      alert("Tài khoản của bạn đã bị khóa.");
     });
 
     return () => {
