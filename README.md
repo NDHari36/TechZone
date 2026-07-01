@@ -36,7 +36,7 @@
 
 ## 2. Kiến Trúc Tổng Thể & Công Nghệ Sử Dụng
 
-Hệ thống được thiết kế theo mô hình **Client-Server** phi trạng thái (Stateless REST API), tích hợp Socket.io cho kết nối song hướng thời gian thực.
+Hệ thống được thiết kế theo mô hình **Client-Server** phi trạng thái (Stateless REST API), đồng thời tích hợp Socket.io để hỗ trợ tính năng block tài khoản theo thời gian thực.
 
 ```
 +--------------------------------------------------------+
