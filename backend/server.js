@@ -5,6 +5,8 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const User = require("./src/models/userModel");
 
 const app = express();
 app.use(cookieParser());
@@ -18,6 +20,31 @@ const io = new Server(server, {
   },
 });
 app.set("socketio", io);
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.auth?.token;
+    if (!token) return next(new Error("No token"));
+
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+    const user = await User.getById(decoded.id);
+
+    if (!user || !user.is_active) {
+      return next(new Error("Account disabled"));
+    }
+
+    socket.userId = user.id;
+
+    next();
+  } catch (err) {
+    next(new Error("Unauthorized"));
+  }
+});
+
+io.on("connection", (socket) => {
+  socket.join(`user_${socket.userId}`);
+  socket.on("disconnect", () => {});
+});
 
 app.use(
   cors({

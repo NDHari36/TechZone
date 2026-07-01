@@ -19,13 +19,21 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-
 api.interceptors.response.use(
   (response) => response,
 
   async (error) => {
     const originalRequest = error.config;
-
+    // USER BỊ KHÓA
+    if (
+      error.response?.status === 403 &&
+      error.response?.data?.message === "Tài khoản đã bị khóa"
+    ) {
+      localStorage.clear();
+      window.location.href = "/signin";
+      return Promise.reject(error);
+    }
+    // REFRESH TOKEN FLOW
     if (
       error.response?.status === 401 &&
       error.response?.data?.code === "TOKEN_EXPIRED" &&
@@ -47,9 +55,7 @@ api.interceptors.response.use(
             )
             .then((res) => {
               const newToken = res.data.accessToken;
-
               localStorage.setItem("authToken", newToken);
-
               return newToken;
             })
             .finally(() => {
@@ -64,11 +70,8 @@ api.interceptors.response.use(
 
         return api(originalRequest);
       } catch (err) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userInfo");
-
+        localStorage.clear();
         window.location.href = "/signin";
-
         return Promise.reject(err);
       }
     }
@@ -76,4 +79,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
 export default api;

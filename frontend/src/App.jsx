@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import ProtectedRoute from "./ProtectedRoute";
 import { CompareProvider } from "./Components/CompareContext";
 import CompareBar from "./Components/CompareBar";
 import ScrollToTop from "./Components/ScrollToTop";
-
 import Home from "./Pages/Home";
 import Landing from "./Pages/Landing";
 import Header from "./Components/Header";
@@ -23,34 +22,30 @@ import Compare from "./Pages/Compare";
 import ResetPass from "./Pages/ForgotPass";
 
 function AppContent() {
-  const API_BASE_URL = import.meta.env.VITE_BASE_URL;
   const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
+  const socketRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io(VITE_SOCKET_URL);
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
 
-    socket.on("force_logout", (data) => {
-      console.log("force_logout:", data);
+    const socket = io(VITE_SOCKET_URL, {
+      auth: { token },
+      reconnection: true,
+    });
 
-      const storedUser = localStorage.getItem("user");
+    socketRef.current = socket;
 
-      if (!storedUser) {
-        return;
-      }
-
-      const currentUser = JSON.parse(storedUser);
-
-      if (Number(currentUser.id) === Number(data.userId)) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
-
-        alert("Tài khoản của bạn vừa bị khóa");
-        navigate("/signin");
-      }
+    socket.on("force_logout", () => {
+      localStorage.clear();
+      socket.disconnect();
+      navigate("/signin", { replace: true });
     });
 
     return () => {
+      socket.off("force_logout");
       socket.disconnect();
     };
   }, [VITE_SOCKET_URL, navigate]);
