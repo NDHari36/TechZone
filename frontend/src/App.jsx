@@ -24,38 +24,36 @@ import ResetPass from "./Pages/ForgotPass";
 
 function AppContent() {
   const API_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const VITE_SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io(API_BASE_URL);
+    const socket = io(VITE_SOCKET_URL);
 
     socket.on("force_logout", (data) => {
-      const userStr = localStorage.getItem("user");
-      if (!userStr) return;
+      console.log("force_logout:", data);
 
-      try {
-        const currentUser = JSON.parse(userStr);
+      const storedUser = localStorage.getItem("user");
 
-        if (Number(currentUser.id) === Number(data.userId)) {
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("user");
+      if (!storedUser) {
+        return;
+      }
 
-          window.dispatchEvent(new Event("storage"));
+      const currentUser = JSON.parse(storedUser);
 
-          alert(
-            "Tài khoản của bạn vừa bị Quản trị viên khóa. Bạn đã bị đăng xuất!",
-          );
-          navigate("/signin");
-        }
-      } catch (err) {
-        console.error("Lỗi khi ép đăng xuất:", err);
+      if (Number(currentUser.id) === Number(data.userId)) {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+
+        alert("Tài khoản của bạn vừa bị khóa");
+        navigate("/signin");
       }
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [API_BASE_URL, navigate]);
+  }, [VITE_SOCKET_URL, navigate]);
 
   return (
     <>
