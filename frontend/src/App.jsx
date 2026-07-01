@@ -39,13 +39,12 @@ function AppContent() {
     socketRef.current = socket;
 
     socket.on("force_logout", () => {
-      alert("Tài khoản của bạn đã bị khóa.");
-
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
       socket.disconnect();
       navigate("/signin", { replace: true });
     });
+    alert("Tài khoản của bạn đã bị khóa.");
 
     return () => {
       socket.off("force_logout");
