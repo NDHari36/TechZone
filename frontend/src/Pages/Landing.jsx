@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ShieldCheck, Truck, Headset } from "lucide-react";
 import productApi from "../api/productApi";
 import SaleBanner from "../Components/Banner";
@@ -7,7 +7,6 @@ import SaleBanner from "../Components/Banner";
 function Landing() {
   const [heroProducts, setHeroProducts] = useState([]);
   const [loadingHero, setLoadingHero] = useState(true);
-  const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
@@ -49,11 +48,14 @@ function Landing() {
       }
     };
     fetchHeroData();
-  }, []);
+  }, [API_BASE_URL]);
 
   return (
     <main className="min-h-screen bg-white text-slate-900 font-sans">
-      <section className="relative min-h-[80vh] bg-white flex items-center overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-slate-100" />
+        <div className="absolute left-0 top-20 h-[500px] w-[500px] rounded-full bg-blue-500/10 blur-[180px]" />
+        <div className="absolute right-0 bottom-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[180px]" />
         <div
           className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 z-0"
           aria-hidden="true"
@@ -61,7 +63,7 @@ function Landing() {
         <div className="mx-auto max-w-6xl px-6 py-20 relative z-10 w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h1 className="text-5xl md:text-7xl xl:text-8xl font-black leading-tight tracking-tighter text-slate-900">
+              <h1 className="text-5xl md:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight text-slate-900">
                 {/* Chào mừng đến với <br /> */}
                 <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent font-Bebas tracking-wider italic">
                   TechZone
@@ -72,16 +74,16 @@ function Landing() {
                 dịch vụ tận tâm.
               </p>
 
-              <div className="flex items-center gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                 <Link
                   to="/store"
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-blue-500/20 transition-all hover:-translate-y-1 active:scale-95"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-bold shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] active:scale-95"
                 >
                   Mua sắm ngay
                 </Link>
                 <a
                   href="#features"
-                  className="border-2 border-slate-200 hover:border-slate-300 text-slate-700 px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-1 active:scale-95 hover:bg-slate-50"
+                  className="border border-slate-300 bg-white/80 backdrop-blur-xl text-slate-700 px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-lg active:scale-95"
                 >
                   Tìm hiểu thêm ↓
                 </a>
@@ -90,11 +92,10 @@ function Landing() {
 
             <div className="block md:block relative">
               <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 to-orange-500/10 blur-3xl rounded-full"></div>
-
               <img
                 src="/images/Logo.jpg"
                 alt="Logo TechZone"
-                className="relative z-10 object-contain rounded-[3rem] shadow-2xl border border-gray-800 animate-[floating_6s_ease-in-out_infinite]"
+                className="relative z-10 object-contain rounded-[40px] border border-white/30 shadow-[0_25px_80px_rgba(59,130,246,0.25)] backdrop-blur-xl animate-[floating_6s_ease-in-out_infinite]"
               />
             </div>
           </div>
@@ -123,7 +124,7 @@ function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Tuyển chọn */}
             <div className="group bg-white rounded-[2rem] p-8 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-2 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 shadow-lg shadow-blue-200/40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                 <ShieldCheck size={28} />
               </div>
 
@@ -139,7 +140,7 @@ function Landing() {
 
             {/* Giao nhanh */}
             <div className="group bg-white rounded-[2rem] p-8 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:shadow-purple-500/5 hover:-translate-y-2 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-3xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6 shadow-lg shadow-purple-200/40 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                 <Truck size={28} />
               </div>
 
@@ -155,7 +156,7 @@ function Landing() {
 
             {/* Tận tâm */}
             <div className="group bg-white rounded-[2rem] p-8 border border-slate-200/80 shadow-sm hover:shadow-2xl hover:shadow-orange-500/5 hover:-translate-y-2 transition-all duration-300">
-              <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-3xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6 shadow-lg shadow-orange-200/40 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                 <Headset size={28} />
               </div>
 
@@ -185,7 +186,7 @@ function Landing() {
               </p>
               <Link
                 to="/store"
-                className="inline-block bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-xl hover:scale-105 hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 transition-all shadow-lg"
+                className="inline-flex items-center gap-3 bg-white text-gray-900 px-10 py-5 rounded-2xl font-black text-xl hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.45)] transition-all duration-300 shadow-xl active:scale-95"
               >
                 VÀO CỬA HÀNG ➔
               </Link>

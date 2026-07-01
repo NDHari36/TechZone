@@ -220,7 +220,11 @@ function Profile() {
     );
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-24 pb-12 text-gray-900">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-24 pb-16 text-gray-900">
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute left-0 top-0 w-[500px] h-[500px] rounded-full bg-blue-400/10 blur-[180px]" />
+        <div className="absolute right-0 bottom-0 w-[500px] h-[500px] rounded-full bg-indigo-400/10 blur-[180px]" />
+      </div>
       <Toaster
         position="top-center"
         reverseOrder={false}
@@ -246,10 +250,10 @@ function Profile() {
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-12">
         <div className="mb-10 animate-fadeInUp">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight">
             Tài khoản của bạn
           </h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-3 text-lg text-slate-500 max-w-2xl">
             Quản lý thông tin cá nhân, địa chỉ giao hàng và bảo mật tài khoản.
           </p>
         </div>
@@ -258,10 +262,10 @@ function Profile() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Sidebar Profile Card */}
             <div className="lg:col-span-1">
-              <div className="bg-white    rounded-3xl border  border-gray-900 p-8 sticky top-24 animate-slideInLeft shadow-[6px_6px_0px_0px_rgba(17,24,39,1)] transition-transform duration-300 hover:-translate-y-1">
+              <div className="bg-white/90 backdrop-blur-xl rounded-[32px] border border-slate-200 p-8 sticky top-24 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                 <div className="flex flex-col items-center text-center">
                   <div className="relative mb-6 animate-scaleIn stagger-1">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-900 shadow-inner border-4 border-white ring-2 ring-gray-900">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 border-4 border-white shadow-xl ring-4 ring-blue-100">
                       <User className="h-10 w-10 text-white" />
                     </div>
                   </div>
@@ -291,7 +295,8 @@ function Profile() {
             {/* Main Content Area */}
             <div className="lg:col-span-2 space-y-8">
               {/* Profile Details Section */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm hover:shadow-md transition-all animate-slideInRight">
+              <div className="bg-white rounded-[32px] border border-slate-200 p-8 shadow-lg hover:shadow-2xl transition-all duration-300">
+                {" "}
                 <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-gray-100">
                   <h3 className="text-xl font-semibold text-slate-900 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -312,7 +317,7 @@ function Profile() {
                 {!isEditingProfile ? (
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div className="group bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-2xl p-5 transition-all">
+                      <div className="group bg-gradient-to-br from-white to-slate-50 border border-slate-200 rounded-2xl p-5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                         <label className="block text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">
                           Username
                         </label>
@@ -373,7 +378,7 @@ function Profile() {
                               fullName: e.target.value,
                             })
                           }
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-non transition-all "
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-non transition-all "
                           placeholder="Nhập họ tên"
                         />
                       </div>
@@ -390,7 +395,7 @@ function Profile() {
                               phone: e.target.value,
                             })
                           }
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-non transition-all "
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-300 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300"
                           placeholder="Nhập SĐT"
                         />
                       </div>
@@ -407,7 +412,7 @@ function Profile() {
                               email: e.target.value,
                             })
                           }
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-non transition-all "
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-300 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300"
                         />
                       </div>
                     </div>
@@ -415,7 +420,7 @@ function Profile() {
                       <button
                         type="submit"
                         disabled={isUpdatingProfile}
-                        className="flex-1 bg-gray-900 hover:bg-black text-white font-black py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed shadow-[4px_4px_0px_0px_rgba(209,213,219,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1"
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-blue-400/30 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isUpdatingProfile ? (
                           <Loader className="animate-spin" size={20} />
@@ -427,7 +432,7 @@ function Profile() {
                       <button
                         type="button"
                         onClick={() => setIsEditingProfile(false)}
-                        className="flex-1 bg-white text-gray-900 font-black py-4 px-6 border-2 border-gray-900 rounded-xl transition-colors hover:bg-gray-50 active:scale-95"
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-4 font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-100 hover:border-slate-400 active:scale-[0.98]"
                       >
                         Hủy
                       </button>
@@ -472,10 +477,10 @@ function Profile() {
                         addr.is_default === 1
                           ? "border-blue-200 bg-blue-50/40"
                           : "border-gray-200 bg-white hover:border-gray-400"
-                      } rounded-xl p-5 sm:p-6 transition-all duration-200`}
+                      } rounded-2xl hover:shadow-xl hover:-translate-y-1 duration-300 p-5 sm:p-6 transition-all duration-200`}
                     >
                       {addr.is_default === 1 && (
-                        <div className="absolute top-4 right-4 bg-green-100 text-green-700 border border-green-200 text-xs font-medium px-3 py-1 rounded-full">
+                        <div className="absolute top-4 right-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg text-green-700 border border-green-200 text-xs font-medium px-3 py-1 rounded-full">
                           ✓ MẶC ĐỊNH
                         </div>
                       )}
@@ -523,7 +528,7 @@ function Profile() {
                 {showAddressForm && (
                   <form
                     onSubmit={handleAddAddress}
-                    className="space-y-5 p-6 sm:p-8 bg-slate-50 rounded-2xl border border-slate-200 animate-scaleIn shadow-sm"
+                    className="space-y-6 rounded-[28px] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6 sm:p-8 shadow-xl animate-scaleIn"
                   >
                     <h4 className="font-black text-lg uppercase tracking-wide border-b-2 border-gray-200 pb-3 mb-4">
                       Thêm địa chỉ mới
@@ -635,14 +640,14 @@ function Profile() {
                     <div className="flex flex-col sm:flex-row gap-4 pt-2">
                       <button
                         type="submit"
-                        className="flex-1 bg-gray-900 text-white font-black py-4 rounded-xl uppercase transition-transform active:scale-95 hover:bg-black"
+                        className="flex-1 bg-gray-900 text-white font-black py-4 rounded-xl uppercase transition-transform active:scale-95 hover:bg-black flex justify-center items-center gap-2 shadow-[4px_4px_0px_0px_rgba(209,213,219,1)] hover:shadow-none hover:translate-y-1 hover:translate-x-1"
                       >
                         Thêm địa chỉ
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowAddressForm(false)}
-                        className="flex-1 bg-white text-gray-900 font-black py-4 border-2 border-gray-900 rounded-xl uppercase transition-colors hover:bg-gray-50 active:scale-95"
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-4 font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-100 hover:border-slate-400 active:scale-[0.98]"
                       >
                         Hủy
                       </button>
@@ -652,7 +657,7 @@ function Profile() {
               </div>
 
               {/* Security Section */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm hover:shadow-md transition-all animate-fadeInUp stagger-2">
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-lg hover:shadow-xl duration-300 hover:shadow-md transition-all animate-fadeInUp stagger-2">
                 <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-gray-100">
                   <h3 className="text-xl font-semiboldtext-gray-900 flex items-center gap-3 uppercase tracking-wide">
                     <div className="bg-gray-900 p-2 rounded-lg">
@@ -757,7 +762,7 @@ function Profile() {
                             confirmPassword: "",
                           });
                         }}
-                        className="flex-1 bg-white text-gray-900 font-black py-4 border-2 border-gray-900 rounded-xl uppercase transition-colors hover:bg-gray-50 active:scale-95"
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-4 font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-100 hover:border-slate-400 active:scale-[0.98]"
                       >
                         Hủy
                       </button>
@@ -770,7 +775,7 @@ function Profile() {
               <div className="pt-4 animate-fadeInUp stagger-2">
                 <button
                   onClick={handleLogout}
-                  className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-5   rounded-3xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-[0px_8px_0px_0px_rgba(153,27,27,1)] hover:shadow-[0px_4px_0px_0px_rgba(153,27,27,1)] hover:translate-y-1 active:shadow-none active:translate-y-2 uppercase tracking-widest text-lg"
+                  className="w-full bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold py-5 rounded-3xl shadow-xl hover:shadow-red-500/40 hover:scale-[1.02] transition-all duration-300 active:scale-95 flex items-center justify-center gap-3"
                 >
                   <LogOut size={24} /> Đăng xuất tài khoản
                 </button>

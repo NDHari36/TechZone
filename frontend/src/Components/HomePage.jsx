@@ -76,16 +76,27 @@ export default function HomePage() {
       }
     };
     fetchData();
-  }, []);
+  }, [API_BASE_URL]);
 
   return (
-    <div className="bg-white text-slate-900 min-h-screen font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 text-slate-900 font-sans overflow-x-hidden">
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-32 left-0 h-96 w-96 rounded-full bg-blue-500/10 blur-[120px]" />
+        <div className="absolute top-80 right-0 h-96 w-96 rounded-full bg-cyan-400/10 blur-[140px]" />
+      </div>
       <div className="h-20"></div>
-
       {/* Hero Sale Banner nổi bật */}
-      <SaleBanner products={bannerProducts} loading={bannerLoading} />
-
+      <section className="pb-20">
+        <SaleBanner products={bannerProducts} loading={bannerLoading} />
+      </section>
       {/* Danh mục & Tìm kiếm */}
+      <div className="text-center mb-12">
+        <h2 className="text-4xl font-black">Khám phá theo danh mục</h2>
+
+        <p className="text-slate-500 mt-3">
+          Lựa chọn nhanh những dòng sản phẩm được quan tâm nhiều nhất.
+        </p>
+      </div>
       <section className="w-full py-12 bg-slate-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex gap-8 overflow-x-auto pb-12 no-scrollbar md:justify-center items-center">
@@ -95,7 +106,7 @@ export default function HomePage() {
                 to={`/Category?keyword=${encodeURIComponent(tile.key)}`}
                 className="group flex-shrink-0 text-center"
               >
-                <div className="mx-auto w-32 h-32 group-hover:scale-105 group-hover:shadow-xl rounded-[2rem] bg-white border border-slate-100 shadow-lg transition-all duration-500 group-hover:border-blue-500/50 group-hover:-translate-y-2 flex items-center justify-center p-5">
+                <div className="mx-auto w-36 h-36  group-hover:scale-105 group-hover:bg-gradient-to-br group-hover:from-blue-50 group-hover:to-white group-hover:shadow-xl rounded-[36px]] bg-white border border-slate-100 shadow-lg transition-all duration-500 group-hover:border-blue-500/50 hover:-translate-y-3 hover:scale-[1.02] transition-all duration-700 ease-out flex items-center justify-center p-5">
                   <img
                     src={tile.image}
                     alt={tile.title}
@@ -112,32 +123,32 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="max-w-5xl mx-auto bg-white p-6 rounded-[2.5rem] shadow-2xl border border-slate-100">
+          <div className="max-w-5xl mx-auto bg-white p-6 rounded-[2.5rem] bg-white/90 backdrop-blur-xl shadow-xl border-white border border-slate-100">
             <SearchFilter
               onSearch={(p) => navigate(`/Category?keyword=${p.keyword || ""}`)}
             />
           </div>
         </div>
       </section>
-
       {/* Sản phẩm nổi bật */}
-      <main className="max-w-7xl mx-auto px-6 py-12 bg-white rounded-[2.5rem] shadow-xl border border-slate-100 my-10">
+      <main className="max-w-7xl mx-auto px-6 py-20 bg-white rounded-[2.5rem] shadow-xl border border-slate-100 my-10">
         <div className="flex items-center gap-6 mb-12">
-          <h3 className="text-3xl font-black tracking-tighter uppercase italic text-slate-900">
+          <h3 className="text-3xl font-extrabold tracking-tight text-slate-900">
             Sản phẩm nổi bật
           </h3>
           <div className="h-[1px] flex-1 bg-slate-200"></div>
           <button
             type="button"
             onClick={() => navigate("/Category")}
-            className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-bold flex items-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95 shadow-md shadow-slate-900/10 hover:shadow-blue-600/20"
+            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 bg-slate-900 hover:scale-105 hover:shadow-xl text-white font-bold flex items-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95 shadow-md shadow-slate-900/10 hover:shadow-blue-600/20"
           >
             TẤT CẢ <ArrowRight size={16} />
           </button>
         </div>
-        <ProductsList />
+        <div className="mt-10">
+          <ProductsList />
+        </div>
       </main>
-
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -204,13 +215,13 @@ export default function HomePage() {
             ].map((item, i) => (
               <div
                 key={i}
-                className={`group p-8 bg-white border ${item.border}
+                className={`group p-10 bg-white border ${item.border}
           rounded-[2rem] shadow-md hover:shadow-2xl ${item.hoverShadow}
           hover:-translate-y-2 transition-all duration-500`}
               >
                 <div
-                  className={`w-16 h-16 ${item.bg} ${item.color}
-            rounded-2xl flex items-center justify-center mb-6
+                  className={`w-20 h-20  ${item.bg} ${item.color}
+            rrounded-[32px] flex items-center justify-center mb-6
             group-hover:scale-110 ${item.rotate} transition-transform duration-300`}
                 >
                   <item.Icon size={30} />
